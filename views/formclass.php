@@ -360,7 +360,7 @@ class formView {
     }
     
     //overwrite or create a new option for the control
-    public function setControlOption($key,$id,$text,$value,$isSelected = null) {
+    public function setControlOption($key,$id,$text = null,$value = null,$isSelected = null) {
         if (array_key_exists($key,$this->controls)) {
             //report success or failure based on setoption
             return $this->controls[$key]->setOption($id,$text,$value,$isSelected);

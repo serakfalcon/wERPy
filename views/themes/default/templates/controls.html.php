@@ -51,7 +51,7 @@ switch($this->type) {
     case 'static':
     /* static information, cannot be edited */
 ?>
-<p class="form-control-static">
+<p class="form-control form-control-static">
     <?php echo $this->text; ?>
 </p>
 <?php

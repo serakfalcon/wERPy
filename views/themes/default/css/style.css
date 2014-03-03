@@ -1,10 +1,10 @@
 /* tables */
-table.tablesorter {
+table.table {
 	background-color: #CDCDCD;
 	width: 100%;
 	text-align: left;
 }
-table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+table.table thead tr th, table.table tfoot tr th {
 	background-color: #e6EEEE;
 	/*border: 1px solid #FFF;*/
 	padding: 4px;
@@ -16,13 +16,13 @@ table.tablesorter thead tr .header {
 	cursor: pointer;
     padding-right:20px;
 }
-table.tablesorter tbody td {
+table.table tbody td {
 	color: #3D3D3D;
 	padding: 4px;
 	background-color: #FFF;
 	vertical-align: top;
 }
-table.tablesorter tbody tr.odd td {
+table.table tbody tr.odd td {
 	background-color:#F0F0F6;
 }
 table.tablesorter thead tr .headerSortUp {
