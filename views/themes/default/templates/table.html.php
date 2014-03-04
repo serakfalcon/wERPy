@@ -13,28 +13,41 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
 ?>
 <div class="table-responsive">
 <table class="table table-striped table-hover selection <?php echo $this->classes['table'];?>">
-<?php if(!empty($this->headers)) { ?>
+<?php 
+if(!empty($this->title)) { ?>
+    <caption class="text-left">
+        <h4>
+            <?php echo $this->title; ?>
+        </h4>
+    </tr>
+<?php
+} //end title statement
+if(!empty($this->headers)) { ?>
     <!-- header row -->
     <thead>
-        <tr> 
-            <?php
-            foreach ($this->headers as $columnhead) {
-                echo '<th';
-                if ($columnhead['class']) {
-                    echo ' class="' . $columnhead['class'] . '"'; 
-                }
-                if ($columnhead['span'] > 1) {
-                    echo ' colspan="' . $columnhead['span'] . '"';
-                }
-                echo '>';
-                echo $columnhead['content']; ?>
-                </th>
+        <?php
+        if (!empty($this->headers)) { ?>
+            <tr> 
                 <?php
-            }
-            ?>
-        </tr>
+                foreach ($this->headers as $columnhead) {
+                    echo '<th';
+                    if ($columnhead['class']) {
+                        echo ' class="' . $columnhead['class'] . '"'; 
+                    }
+                    if ($columnhead['span'] > 1) {
+                        echo ' colspan="' . $columnhead['span'] . '"';
+                    }
+                    echo '>';
+                    echo $columnhead['content']; ?>
+                    </th>
+                    <?php
+                }
+                ?>
+            </tr>
+        <?php } // end headers statement ?>
     </thead>
-<?php } // enclose thead if statement ?>
+<?php
+} // end thead if statement ?>
     <!-- table content -->
     <tbody>
         <?php 

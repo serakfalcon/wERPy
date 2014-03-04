@@ -14,6 +14,8 @@ class tableView {
     private $maxRowWidth;
     private $emptyMessage;
     private  $justifyheaders;
+    private $title;
+    private $titlespan;
     public  $themefolder;
     
     public function __construct() {
@@ -24,6 +26,11 @@ class tableView {
         $this->emptyMessage = "no content!";
         $this->themefolder = $GLOBALS['templateFolder'];
         $this->justifyheaders = true;
+    }
+    
+    public function setTitle($title,$span) {
+        $this->title = $title;
+        $this->titlespan = $span;
     }
     
     //sets table component classes, if necessary.
@@ -166,7 +173,8 @@ class tableView {
     
     function display() {
         //if there are headers OR rows, display the table
-        if(!(empty($this->headers) || empty($this->rows))) {
+        if (!empty($this->headers) || empty($this->rows)) {
+            
             include($this->themefolder . '/table.html.php');
             return true;
         } else {
