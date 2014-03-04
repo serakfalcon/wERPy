@@ -1,7 +1,7 @@
 /* tables */
 table.table {
 	background-color: #CDCDCD;
-	width: 100%;
+	max-width: 80%;
 	text-align: left;
 }
 table.table thead tr th, table.table tfoot tr th {

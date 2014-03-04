@@ -18,21 +18,17 @@ class viewController {
         $this->classes['tableView'] = 'table.html.php';
         $this->classes['formView'] = 'form.html.php';
         $this->classes['controlView'] = 'controls.html.php';
-        if isset($templatefolder) {
-            $this->setTemplateFolder($templatefilder)
-        } else {
-            $this->templateFolder = 'themes/default/';
-        }
+        $this->setTemplateFolder($templatefolder);
     }
     
     //set the template folder. TODO: make sure only valid folders can be set
     public function setTemplateFolder($templatefolder) {
-        $this->templateFolder = $templatefolder;
+        $this->templateFolder = (isset($templatefolder)) ? $templatefolder : 'themes/default/';
     }
     
     //return the template folder, in case it's needed.
     public function getTemplateFolder() {
-        return $templateFolder;
+        return 'themes/default/';
     }
     
     //override class views in the event the theme has a different naming scheme
@@ -49,10 +45,10 @@ class viewController {
     public function addInclude($includewhere,$includefile) {
         switch($includewhere) {
             case 'header':
-                $this->headerincludes[] = $templatefolder . 'includes/' . $includefile;
+                $this->headerincludes[] = $this->templateFolder . 'includes/' . $includefile;
                 break;
             case 'footer':
-                $this->footerincludes[] = $templatefolder . 'includes/' . $includefile;
+                $this->footerincludes[] = $this->templateFolder . 'includes/' . $includefile;
                 break;
         }
     }
@@ -64,7 +60,7 @@ class viewController {
     }
     
     public function getFooter() {
-        foreach ($this->footerincludes as $includfile) {
+        foreach ($this->footerincludes as $includefile) {
             include_once($includefile);
         }
     }
@@ -78,7 +74,7 @@ class viewController {
     }
     
     public function createControl() {
-        return new controlView($this->templateFolder . 'templates/',$this->classes['controlView'];
+        return new controlView($this->templateFolder . 'templates/',$this->classes['controlView']);
     }
     
 }

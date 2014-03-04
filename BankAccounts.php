@@ -186,7 +186,7 @@ if (!isset($SelectedBankAccount)) {
 	$DbgMsg = _('The SQL used to retrieve the bank account details was') . '<br />' . $sql;
 	$result = DB_query($sql,$db,$ErrMsg,$DbgMsg);
     
-    $BankAccountsTable = $MainView->createTable;
+    $BankAccountsTable = $MainView->createTable();
     $headers[] = _('GL Account Code');
     $headers[] = _('Bank Account Name');
     $headers[] = _('Bank Account Code');
@@ -237,7 +237,7 @@ if (isset($SelectedBankAccount)) {
 }
 
 
-$BankAccountsForm = $MainView->createForm;
+$BankAccountsForm = $MainView->createForm();
 $BankAccountsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
 $BankAccountsForm->FormID = $_SESSION['FormID'];
 

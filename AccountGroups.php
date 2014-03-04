@@ -216,7 +216,7 @@ if (isset($_POST['submit'])) {
 		echo '<br />' . _('There are') . ' ' . $myrow['groups'] . ' ' . _('general ledger accounts that refer to this account group');
 		echo '<br />';
         
-        $accountGroupsForm = $MainView->createForm;
+        $accountGroupsForm = $MainView->createForm();
         $accountGroupsForm->id = 'AccountGroups';
         $accountGroupsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
         $accountGroupsForm->FormID = $_SESSION['FormID'];
@@ -294,7 +294,7 @@ or deletion of the records*/
 	$result = DB_query($sql,$db,$ErrMsg,$DbgMsg);
 	echo '<p class="page_title_text"><img src="'.$RootPath.'/css/'.$Theme.'/images/maintenance.png" title="' . _('Search') . '" alt="" />' . ' ' . $Title . '<br /></p>';
 
-    $accountGroupTable = $MainView->createTable;
+    $accountGroupTable = $MainView->createTable();
     $accountGroupTable->setClass('table','tablesorter');
     //set up headers
     $accountGroupTable->setClass('headers','header');
@@ -345,7 +345,7 @@ if (isset($_POST['SelectedAccountGroup']) or isset($_GET['SelectedAccountGroup']
 
 if (!isset($_GET['delete'])) {
 
-        $accountGroupsForm = $MainView->createForm;
+        $accountGroupsForm = $MainView->createForm();
         $accountGroupsForm->id = 'AccountGroups';
         $accountGroupsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
         $accountGroupsForm->FormID = $_SESSION['FormID'];

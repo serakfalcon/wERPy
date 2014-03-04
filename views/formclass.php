@@ -321,7 +321,7 @@ class formView implements View {
     
     //adds a control to the form. $key and $tabindex are required.
     public function addControl($key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null) {
-        $newControl = $MainView->createControl();
+        $newControl = $GLOBALS['MainView']->createControl();
         if(array_key_exists($key,$this->controls)) {
             //report error: could not add control : key exists already
             return false;
@@ -376,7 +376,7 @@ class formView implements View {
     
     public function delControl($key) {
         if (isset($this->controls[$key])) {
-            unset($this->controls[$key);
+            unset($this->controls[$key]);
             return true;
         } else {
             return false;
@@ -420,7 +420,7 @@ class formView implements View {
     public function display() {
         global $templateFolder;
         if (isset($this->FormID) && isset($this->action)) {
-            include($GLOBALS['templateFolder'] . '/form.html.php');
+            include($this->path);
         } else {
             //error, form not properly set up
             return false;

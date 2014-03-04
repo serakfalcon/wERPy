@@ -207,7 +207,7 @@ if (isset($_POST['submit'])) {
 
 if (!isset($_GET['delete'])) {
 
-    $GLaccountsForm = $MainView->createForm;
+    $GLaccountsForm = $MainView->createForm();
     $GLaccountsForm->id = 'GLAccounts';
     $GLaccountsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'));
     $GLaccountsForm->FormID = $_SESSION['FormID'];
@@ -300,7 +300,7 @@ or deletion of the records*/
 	$result = DB_query($sql,$db,$ErrMsg);
     
     
-    $GLaccountsTable = $MainView->createTable;
+    $GLaccountsTable = $MainView->createTable();
     $GLaccountsTable->setClass('table','tablesorter');
     $GLaccountsTable->setClass('headers','header');
     $header[] =  _('Account Code');

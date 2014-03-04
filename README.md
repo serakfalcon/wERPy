@@ -11,6 +11,7 @@ Goals:
 
  * Refactor existing code to separate out View components (i.e. implementing a MVP design pattern)
  * Integrate jQuery and Bootstrap for a more slick user experience
+ * Create 'classic' theme that doesn't have jQuery or Bootstrap (aka it will be indistinguishable from the current version as far as the user is concerned)
  * Delegate includes to be theme-specific
 
 Here is the rough version of table, form and control classes with bootstrap and tablesorter.
@@ -18,7 +19,8 @@ Here is the rough version of table, form and control classes with bootstrap and 
  * The table class should be able to handle most tables in webERP though some more complicated structures 
 (e.g. the Trial Balance) may need customizations.
  * The form and control classes currently only support once control per line, which works for many of the simple control interfaces but it will need to be extended to support more layouts.
-Likely that will mean a new form class (the current form view should be renamed simpleFormView and a new extended class extendedFormView should handle more advanced construction, something like that)
+ I have thought through the code to implement it (controls will have x-widths and y-widths) but haven't finished writing it yet.
+ * I have been using the aguapop theme to implement the tableviews etc. so some features may look strange with other themes.
 
 Use:
 ----
@@ -28,15 +30,21 @@ Use:
 Before default.css is linked in header.inc i.e. before line 40:
 
 ``` php
-include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/views-header.php');
+include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/viewcontroller.php');
+$MainView->getHeader();
 ```
 
 After the last div but still inside the body tag in footer.inc:
 
 ``` php
-include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/views-footer.php');
+$MainView->getFooter();
 ```
 
+Usage of classes
+----------------
+Tables are instantiated by assigning $MainView->createTable() to the table variable (e.g. $tablevar = $MainView->createTable())
+Forms are instantiated by assigning $MainView->createForm() to the  form variable
+Controls are not instantiated directly, this is handled through the Form's addControl/setControl/delControl functions.
 Work To Do:
 ----
 

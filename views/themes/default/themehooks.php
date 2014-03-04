@@ -5,6 +5,11 @@ themes can also have their own custom view classes.
 to create a new view class, extend viewController and replace $MainView with the new class.
 note that pages created with custom view classes will not be viewable by other themes.
 
+*/
+
+
+/*
+
 tableView is by default implemented by table.html.php
 formView is by default implemented by form.html.php
 controlView is by default implemented by controls.html.php
@@ -19,7 +24,7 @@ $MainView->setClassView('formView',$pathtoformView);
 
 /*
 
-Add included files (must be in themefolder/includes/)
+Add files that will be directly inserted into the header and footer (must be in themefolder/includes/)
 */
 
 $MainView->addInclude('header','header.php');
