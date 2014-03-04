@@ -31,7 +31,7 @@ Before default.css is linked in header.inc i.e. before line 40:
 include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/views-header.php');
 ```
 
-After the last </div> but before </body> in footer.inc:
+After the last div but still inside the body tag in footer.inc:
 
 ``` php
 include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/views-footer.php');
