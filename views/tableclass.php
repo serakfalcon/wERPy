@@ -7,24 +7,24 @@ class row {
 }
 
 //table view construct. use to display tables.
-class tableView {
+class tableView implements View {
     private $classes = array();
     private $headers = array();
     private $rows = array();
     private $maxRowWidth;
     private $emptyMessage;
-    private  $justifyheaders;
+    private $justifyheaders;
     private $title;
     private $titlespan;
-    public  $themefolder;
+    private $path;
     
-    public function __construct() {
+    public function __construct($templatefolder,$classfile) {
         $this->classes['table'] = "";
         $this->classes['headers'] = "";
         $this->classes['columns'] = "";
         $this->classes['rows'] = "";
         $this->emptyMessage = "no content!";
-        $this->themefolder = $GLOBALS['templateFolder'];
+        $this->path = $templatefolder . $classfile;
         $this->justifyheaders = true;
     }
     
@@ -174,8 +174,7 @@ class tableView {
     function display() {
         //if there are headers OR rows, display the table
         if (!empty($this->headers) || empty($this->rows)) {
-            
-            include($this->themefolder . '/table.html.php');
+            include($this->path);
             return true;
         } else {
         //Neither headers nor rows, table cannot be displayed, return failure

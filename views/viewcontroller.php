@@ -1,11 +1,21 @@
 <?php
 
-//for now, point to the theme folder
-//later, make index.php in the theme folder resolve the include itself
-//then, move this to config.php
-$templateFolder = 'themes/default/templates/';
+//TODO: get settings from config.php so user can set themes from front-end
 
-include('tableclass.php');
-include('formclass.php');
+include_once('core.php');
+$MainView = new viewController; //only instantiate this once, right here.
+/*
+to assign template folder to something other than the default:
+either alter creation of $MainView to $MainView = new viewController($themefolder); or instantiate as is and
+$MainView->setTemplateFolder($templatefolder); 
+*/
+
+
+//pass control to theme to allow it to alter settings
+include_once($MainView->getTemplateFolder . 'themehooks.php');
+
+//add all other required class constructor files
+include_once('tableclass.php');
+include_once('formclass.php');
 
 ?>

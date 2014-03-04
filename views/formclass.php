@@ -1,6 +1,6 @@
 <?php
 
-class controlView {
+class controlView implements View {
     
     public $htmlclass;
     public $tabindex;
@@ -10,6 +10,12 @@ class controlView {
     private $settings; 
     private $attributes; //compiled from settings
     private $options = array();
+    private $path;
+    
+    //viewcontroller will load the appropriate path for the display file
+    public function __construct($templatefolder,$classfile) {
+        $this->path = $templatefolder . $classfile;
+    }
     
     public function setType($Type) {
         switch($Type) {
@@ -60,7 +66,7 @@ class controlView {
             $result['selected'] = false;
         }
         if (isset($id)) {
-            if (isset($this->options[$id])) {
+            if (array_key_exists($id,$this->options)) {
                 //this option key already exists, do nothing --> add will not add the same ID twice
                 return false;
             } else {
@@ -231,7 +237,7 @@ class controlView {
         if($this->type && isset($this->tabindex)) {
             //prepare all settings for the template so it can use them all as $this->attributes
             $this->compileSettings();
-            include($GLOBALS['templateFolder'] . '/controls.html.php');
+            include($this->path);
             return true;
         } else {
             //error, could not display control, invalid settings
@@ -241,7 +247,7 @@ class controlView {
     
 }
 
-class formView {
+class formView implements View {
 
     public $id;
     public $FormID;
@@ -249,6 +255,11 @@ class formView {
     private $action;
     private $controls = array();
     private $hiddenControls = array();
+    private $path;
+    
+    public function __construct($templatefolder,$classfile) {
+        $this->path = $templatefolder . $classfile;
+    }
     
     public function setAction($whataction) {
         $this->action = $whataction;
@@ -274,15 +285,26 @@ class formView {
         }
     }
     
-    //edit an existing hidden control. Does nothing if the key doesn't yet exist.
-    public function editHiddenControl($id,$name,$value) {
+    //edit an existing hidden control. Insert if key doesn't exist.
+    public function setHiddenControl($id,$name = null,$value = null) {
         if (array_key_exists($id,$this->hiddenControls)) {
-            $result['name'] = $name;
-            $result['value'] = $value;
-            $this->hiddenControls[$id] = $result;
+            if (isset($name)) {
+                $this->hiddenControls[$id]['name'] = $name;
+            }
+            if (isset($value)) {
+                $this->hiddenControls[$id]['value'] = $value;
+            }
             return true;
         } else {
-            return false;
+            if(isset($id) && isset($name) && isset($value)) {
+                $result['name'] = $name;
+                $result['value'] = $value;
+                $this->hiddenControls[$id] = $result;
+                return true;
+            } else {
+                //error, could not set hiddencontrol: name, value or id missing
+                return false;
+            }
         }
     }
     
@@ -299,7 +321,7 @@ class formView {
     
     //adds a control to the form. $key and $tabindex are required.
     public function addControl($key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null) {
-        $newControl = new controlView;
+        $newControl = $MainView->createControl();
         if(array_key_exists($key,$this->controls)) {
             //report error: could not add control : key exists already
             return false;
@@ -320,8 +342,8 @@ class formView {
         }
     }
     
-    //edits an existing control. Any arguments not passed will be ignored.
-    public function editControl($key,$tabindex = null,$type = null,$caption = null,$settings = null,$htmlclass = null) {
+    //edits an existing control. if control doesn't exist, create it with the specific key. Any arguments not passed will be ignored.
+    public function setControl($key,$tabindex = null,$type = null,$caption = null,$settings = null,$htmlclass = null) {
         if (array_key_exists($key,$this->controls)) {
             $editControl = $this->controls[$key];
             if (isset($tabindex)) {
@@ -343,7 +365,20 @@ class formView {
             }
             return true;
         } else {
-            //error: control not found
+            if (isset($key) && isset($type)) {
+                return $this->addControl($key,$tabindex,$type,$caption,$settings,$htmlclass);
+            } else {
+                //error: control could not be added
+                return false;
+            }
+        }
+    }
+    
+    public function delControl($key) {
+        if (isset($this->controls[$key])) {
+            unset($this->controls[$key);
+            return true;
+        } else {
             return false;
         }
     }
@@ -352,6 +387,7 @@ class formView {
     public function addControlOption($key,$text,$value,$isSelected = null,$id = null) {
         if (isset($this->controls[$key])) {
             //report success or failure based on addOption
+            //addOption($text,$value,$isSelected = null,$id = null)
             return $this->controls[$key]->addOption($text,$value,$isSelected,$id);
         } else {
             //error, key not found

@@ -171,7 +171,7 @@ if (!isset($_GET['SelectedSectionID']) AND !isset($_POST['SelectedSectionID'])) 
 	$result = DB_query($sql,$db,$ErrMsg);
 	echo '<p class="page_title_text"><img src="'.$RootPath.'/css/'.$Theme.'/images/maintenance.png" title="' . _('Search') . '" alt="" />' . ' ' . $Title . '<br /></p>';
     
-    $accountSectionsTable = new tableView;
+    $accountSectionsTable = $MainView->createTable;
     $accountSectionsTable->setClass('table','tablesorter');
     $accountSectionsTable->setClass('headers','header');
     $tableHeaders[] = _('Section Number');
@@ -210,7 +210,7 @@ if (isset($_POST['SelectedSectionID']) or isset($_GET['SelectedSectionID'])) {
 if (! isset($_GET['delete'])) {
     
     
-    $accountSectionsForm = new formView;
+    $accountSectionsForm = $MainView->createForm;
     $accountSectionsForm->id = 'AccountSections';
     $accountSectionsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
     $accountSectionsForm->FormID = $_SESSION['FormID'];
