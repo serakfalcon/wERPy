@@ -187,6 +187,8 @@ if (!isset($SelectedBankAccount)) {
 	$result = DB_query($sql,$db,$ErrMsg,$DbgMsg);
     
     $BankAccountsTable = $MainView->createTable();
+    $BankAccountsTable->sortable = true;
+    $BankAccountsTable->id = 'BankAccountsTable';
     $headers[] = _('GL Account Code');
     $headers[] = _('Bank Account Name');
     $headers[] = _('Bank Account Code');

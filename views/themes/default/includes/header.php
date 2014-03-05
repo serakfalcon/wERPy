@@ -12,4 +12,6 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 <!-- theme-specific css -->
+<link href="includes/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
+<link href="views/themes/default/css/core.css" rel="stylesheet">
 <link href="views/themes/default/css/style.css" rel="stylesheet">

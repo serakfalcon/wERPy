@@ -301,8 +301,8 @@ or deletion of the records*/
     
     
     $GLaccountsTable = $MainView->createTable();
-    $GLaccountsTable->setClass('table','tablesorter');
-    $GLaccountsTable->setClass('headers','header');
+    $GLaccountsTable->sortable = true;
+    $GLaccountsTable->id = "GLAccountsTable";
     $header[] =  _('Account Code');
     $header[] = _('Account Name');
     $header[] = _('Account Group');

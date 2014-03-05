@@ -295,9 +295,11 @@ or deletion of the records*/
 	echo '<p class="page_title_text"><img src="'.$RootPath.'/css/'.$Theme.'/images/maintenance.png" title="' . _('Search') . '" alt="" />' . ' ' . $Title . '<br /></p>';
 
     $accountGroupTable = $MainView->createTable();
-    $accountGroupTable->setClass('table','tablesorter');
+    $accountGroupTable->id = 'GroupTable';
+    $accountGroupTable->sortable = true;
+    $accountGroupTable->sortSettings = '"aaSorting": [[ 2, "asc" ]]';
     //set up headers
-    $accountGroupTable->setClass('headers','header');
+    //$accountGroupTable->setClass('headers','header');
     $tableHeaders[] = _('Group Name');
     $tableHeaders[] = _('Section');
     $tableHeaders[] = _('Sequence In TB');

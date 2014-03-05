@@ -172,8 +172,8 @@ if (!isset($_GET['SelectedSectionID']) AND !isset($_POST['SelectedSectionID'])) 
 	echo '<p class="page_title_text"><img src="'.$RootPath.'/css/'.$Theme.'/images/maintenance.png" title="' . _('Search') . '" alt="" />' . ' ' . $Title . '<br /></p>';
     
     $accountSectionsTable = $MainView->createTable();
-    $accountSectionsTable->setClass('table','tablesorter');
-    $accountSectionsTable->setClass('headers','header');
+    $accountSectionsTable->sortable = true;
+    $accountSectionsTable->id = 'SectionsTable';
     $tableHeaders[] = _('Section Number');
     $tableHeaders[] = _('Section Description');
     $accountSectionsTable->setHeaders($tableHeaders);

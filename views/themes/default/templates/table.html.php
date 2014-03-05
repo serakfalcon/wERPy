@@ -12,7 +12,7 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
 */
 ?>
 <div class="table-responsive">
-<table class="table table-striped table-hover selection <?php echo $this->classes['table'];?>">
+<table class="table table-striped table-hover <?php echo $this->classes['table'];?>" <?php echo $this->attributes; ?>>
 <?php 
 if(!empty($this->title)) { ?>
     <caption class="text-left">
@@ -41,6 +41,14 @@ if(!empty($this->headers)) { ?>
                     echo $columnhead['content']; ?>
                     </th>
                     <?php
+                }
+                ?><!-- <?php echo $this->columnCount . ' vs. ' . $this->headerCount; ?> --><?php
+                if ($this->columnCount > $this->headerCount) {
+                    $i = $this->headerCount;
+                    while ($i < $this->columnCount) {
+                        echo '<th class="no-sort"> </th>';
+                        $i++;
+                    }
                 }
                 ?>
             </tr>

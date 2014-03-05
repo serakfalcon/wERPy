@@ -11,12 +11,18 @@ class tableView implements View {
     private $classes = array();
     private $headers = array();
     private $rows = array();
-    private $maxRowWidth;
     private $emptyMessage;
     private $justifyheaders;
     private $title;
     private $titlespan;
     private $path;
+    private $settings = array();
+    public $attributes;
+    public $columnCount;
+    public $headerCount;
+    public $id;
+    public $sortable;
+    public $sortSettings;
     
     public function __construct($templatefolder,$classfile) {
         $this->classes['table'] = "";
@@ -26,6 +32,8 @@ class tableView implements View {
         $this->emptyMessage = "no content!";
         $this->path = $templatefolder . $classfile;
         $this->justifyheaders = true;
+        $this->sortable = false;
+        $this->sortSettings = false;
     }
     
     public function setTitle($title,$span) {
@@ -51,6 +59,20 @@ class tableView implements View {
                 break;
         }
         return $result;
+    }
+    
+    //adds attributes to the table, attributes are in an array, expected key is attribute and value is value.
+    //overwrite = true means replace the attributes with the current set, false means append
+    public function setSettings($settings,$overwrite = true) {
+        if(is_array($settings)) {
+            if ($overwrite) {
+                $this->settings = $settings;
+            } else {
+                $this->settings = array_merge($this->settings,$settings);
+            }
+        } else {
+            $this->settings[] = $settings;
+        }
     }
     
     //take column of input and ensure it's formatted correctly.
@@ -174,6 +196,24 @@ class tableView implements View {
     function display() {
         //if there are headers OR rows, display the table
         if (!empty($this->headers) || empty($this->rows)) {
+            $this->attributes = '';
+            foreach ($this->settings as $attribute => $value) {
+                $this->attributes .= ' ' . $attribute . '="' . $value . '"';
+            }
+            if(isset($this->id)) {
+                $this->attributes .= ' id="' . $this->id . '"';
+            }
+            
+            //get total amount of columns
+            if ($this->justifyheaders) {
+                $this->columnCount = 1;
+                foreach($this->rows as $row) {
+                    if(count($row->columns) > $this->columnCount) {
+                        $this->columnCount = count($row->columns);
+                    }
+                }
+            }
+            $this->headerCount = count($this->headers);
             include($this->path);
             return true;
         } else {
