@@ -225,7 +225,9 @@ install/
 locale/
 reportwriter/
 xmlrpc/
-includes/*.php
+includes/PDF*.php
+includes/D*.php
+includes/C*.php
 includes/*.inc
 includes/barcodepack/
 includes/php-gettext/
@@ -244,7 +246,6 @@ geo*.php
 favicon.ico
 logo_server.jpg
 report_runner.php
-index.php
 Work*.php
 PDF*.php
 Tax*.php
