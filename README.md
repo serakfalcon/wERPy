@@ -14,12 +14,11 @@ Goals:
  * Create 'classic' theme that doesn't have jQuery or Bootstrap (aka it will be indistinguishable from the current version as far as the user is concerned)
  * Delegate includes to be theme-specific
 
-Here is the rough version of table, form and control classes with bootstrap and tablesorter.
+Here is the rough version of menu, table, form and control classes with bootstrap and DataTables.
 
  * The table class should be able to handle most tables in webERP though some more complicated structures 
 (e.g. the Trial Balance) may need customizations.
- * The form and control classes currently only support once control per line, which works for many of the simple control interfaces but it will need to be extended to support more layouts.
- I have thought through the code to implement it (controls will have x-widths and y-widths) but haven't finished writing it yet.
+ * The form and control classes currently support multiple controls per line, but I haven't figured out control height yet. Acceptable for most use-cases.
  * I have been using the aguapop theme to implement the tableviews etc. so some features may look strange with other themes.
 
 Use:
@@ -44,11 +43,15 @@ Usage of classes
 ----------------
 Tables are instantiated by assigning $MainView->createTable() to the table variable (e.g. $tablevar = $MainView->createTable())
 Forms are instantiated by assigning $MainView->createForm() to the  form variable
+Menus are instantiated by assigning $MainView->createMenu() to the menu variable. a Menu ID can be passed,
+which will allow the system to automatically load the appropriate menu items from $MenuItems  (MainMenuLinksArray.php).
+items can be appended/deleted to the menu after it is loaded.
 Controls are not instantiated directly, this is handled through the Form's addControl/setControl/delControl functions.
 Work To Do:
 ----
 
- * Extend formView / create more complicated extension of formView class to cover all use cases
- * Headers/footers/menus should also be rolled into the themes themselves
+ * Continue to extend formView / create more complicated extension of formView class to cover all use cases
+ * Figure out a good way to store and retrieve the menus, allow them to be user-customizable
+ * Headers/footers should also be rolled into the themes themselves
  * 'Classic' themes that will cause webERP to render the same way it does now
  * Code refactoring to take advantage of the view classes
