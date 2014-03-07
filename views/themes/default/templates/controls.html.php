@@ -17,19 +17,41 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
 
 switch($this->type) { 
     case 'select':
-    case 'yesno':
         //fallthrough for yesno: could have custom setting but for now we're keeping it the same as the other select boxes
     /* Display of comboboxes (selection boxes) here */
 ?>
-<select tabindex="<?php echo $this->tabindex; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> >
-    <?php foreach ($this->options as $option) { ?>
-        <option <?php echo  $option['attributes']; ?>>
-            <?php echo $option['text']; ?>
-        </option>
-    <?php
-    } //end option foreach loop
-    ?>
-</select>
+<div class="col-xs-4 control-label">
+    <label><?php echo $this->caption; ?></label>
+</div>
+<div class="col-xs-8">
+    <select tabindex="<?php echo $this->tabindex; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> >
+        <?php foreach ($this->options as $option) { ?>
+            <option <?php echo  $option['attributes']; ?>>
+                <?php echo $option['text']; ?>
+            </option>
+        <?php
+        } //end option foreach loop
+        ?>
+    </select>
+</div>
+<?php
+        break;
+    case 'yesno':
+?>
+<div class="col-xs-5 control-label">
+    <label><?php echo $this->caption; ?></label>
+</div>
+<div class="col-xs-7">
+    <select tabindex="<?php echo $this->tabindex; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> >
+        <?php foreach ($this->options as $option) { ?>
+            <option <?php echo  $option['attributes']; ?>>
+                <?php echo $option['text']; ?>
+            </option>
+        <?php
+        } //end option foreach loop
+        ?>
+    </select>
+</div>
 <?php
         break;
     case 'submit':
@@ -45,15 +67,25 @@ switch($this->type) {
     case 'number':
     /* display number box here, different from textbox? */
 ?>
-<input tabindex="<?php echo $this->tabindex; ?>" type="number" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+<div class="col-xs-5 control-label">
+    <label><?php echo $this->caption; ?></label>
+</div>
+<div class="col-xs-7">
+    <input tabindex="<?php echo $this->tabindex; ?>" type="number" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+</div>
 <?php
         break;
     case 'static':
     /* static information, cannot be edited */
 ?>
-<p class="form-control form-control-static">
-    <?php echo $this->text; ?>
-</p>
+<div class="col-xs-4 control-label">
+    <label><?php echo $this->caption; ?></label>
+</div>
+<div class="col-xs-8">
+    <p class="form-control form-control-static">
+        <?php echo $this->text; ?>
+    </p>
+</div>
 <?php
         break;
     case 'text':
@@ -61,7 +93,12 @@ switch($this->type) {
     //fallthrough, textbox is default
     /* Display of textboxes here : */
 ?>
-<input tabindex="<?php echo $this->tabindex; ?>" type="text" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> /> 
+<div class="col-xs-4 control-label">
+    <label><?php echo $this->caption; ?></label>
+</div>
+<div class="col-xs-8">
+    <input tabindex="<?php echo $this->tabindex; ?>" type="text" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+</div>
 <?php
     break;
 } // end switch of type 

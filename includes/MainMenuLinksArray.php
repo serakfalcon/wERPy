@@ -4,8 +4,9 @@
 
 /* webERP menus with Captions and URLs. */
 
-$ModuleLink = array('orders', 'AR', 'PO', 'AP', 'stock', 'manuf',  'GL', 'FA', 'PC', 'system', 'Utilities');
-$ReportList = array('orders'=>'ord',
+$ModuleLink = array(/*'dashboard',*/'orders', 'AR', 'PO', 'AP', 'stock', 'manuf',  'GL', 'FA', 'PC', 'system', 'Utilities');
+$ReportList = array(/*'dashboard' => 'dash',*/
+                    'orders'=>'ord',
 					'AR'=>'ar',
 					'PO'=>'prch',
 					'AP'=>'ap',
@@ -19,7 +20,8 @@ $ReportList = array('orders'=>'ord',
 					);
 
 /*The headings showing on the tabs accross the main index used also in WWW_Users for defining what should be visible to the user */
-$ModuleList = array(_('Sales'),
+$ModuleList = array(/*_('Dashboard'),*/
+                    _('Sales'),
 					_('Receivables'),
 					_('Purchases'),
 					_('Payables'),
@@ -586,12 +588,17 @@ if (!file_exists($cachefile) || time() - $cachetime > filemtime($cachefile) || i
                                                             '/Z_RePostGLFromPeriod.php',
                                                             '/Z_DeleteOldPrices.php',
                                                             '/Z_ImportPriceList.php');
-       
+                                                            
+    $MenuItems['dashboard']['Transactions']['menu'] = array ( '/Dashboard.php?add=0' => _('Add Item'));
+    $MenuItems['dashboard']['Maintenance']['menu'] = array ( '/Dashboard.php?add=1' => _('Add Item'));
+    $MenuItems['dashboard']['Reports']['menu'] = array ( '/Dashboard.php?add=2' => _('Add Item'));
     foreach ($MenuItems as $key => $item) {
         //store url and caption as a key => item pair to make it easier to loop through in menuclass.php
-        $MenuItems[$key]['Transactions']['menu'] = array_combine($item['Transactions']['URL'],$item['Transactions']['Caption']);
-        $MenuItems[$key]['Maintenance']['menu'] = array_combine($item['Maintenance']['URL'],$item['Maintenance']['Caption']);
-        $MenuItems[$key]['Reports']['menu'] = array_combine($item['Reports']['URL'],$item['Reports']['Caption']);
+        if ($key != 'dashboard') {
+            $MenuItems[$key]['Transactions']['menu'] = array_combine($item['Transactions']['URL'],$item['Transactions']['Caption']);
+            $MenuItems[$key]['Maintenance']['menu'] = array_combine($item['Maintenance']['URL'],$item['Maintenance']['Caption']);
+            $MenuItems[$key]['Reports']['menu'] = array_combine($item['Reports']['URL'],$item['Reports']['Caption']);
+        }
         $MenuItems[$key]['Transactions']['id'] = 'TransactionsDiv';
         $MenuItems[$key]['Maintenance']['id'] = 'MaintenanceDiv';
         $MenuItems[$key]['Reports']['id'] = 'InquiriesDiv';
@@ -621,5 +628,7 @@ if (!file_exists($cachefile) || time() - $cachetime > filemtime($cachefile) || i
         unset($MenuItems[$key]['Reports']['Caption']);
         unset($MenuItems[$key]['Reports']['URL']);
     }
+    
+    
 //} for cache file
 ?>

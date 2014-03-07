@@ -223,6 +223,7 @@ if (isset($_POST['submit'])) {
         $accountGroupsForm->addHiddenControl('OriginalAccountGroup', $_GET['SelectedAccountGroup']);
         //Destiny? spelling error? Should be DestinationAccountGroup or NewAccountGroup
         $controlsettings['name'] = 'DestinyAccountGroup';
+        //$key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null,$row = null,$order = null,$dimensions = null
         $accountGroupsForm->addControl(1,2,'select', _('Parent Group') . ':',$controlsettings, (in_array('ParentGroupName',$Errors) ?  'selecterror' : null));
         
         $sql = "SELECT groupname FROM accountgroups";
@@ -242,7 +243,7 @@ if (isset($_POST['submit'])) {
                                                        htmlentities($GroupRow['groupname'], ENT_QUOTES,'UTF-8'));
             }
         }
-        //$key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null
+        //$key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null,$row = null,$order = null,$dimensions = null
         $controlsettings['name'] = 'MoveGroup';
         $controlsettings['value'] = _('Move Group');
         $accountGroupsForm->addControl(2,6,'submit',null,$controlsettings);
@@ -438,8 +439,9 @@ if (!isset($_GET['delete'])) {
 	}
 	
     $controlsettings['name'] = 'SectionInAccounts';
-    //$key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null
-    $accountGroupsForm->addControl(3,3,'select',_('Section In Accounts') . ':',$controlsettings,in_array('SectionInAccounts',$Errors) ?  'class="selecterror"' : null);
+    //$key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null,$row = null,$order = null,$dimensions = null
+    $dimensions['width'] = 8;
+    $accountGroupsForm->addControl(3,3,'select',_('Section In Accounts') . ':',$controlsettings,in_array('SectionInAccounts',$Errors) ?  'class="selecterror"' : null,3,null,$dimensions);
 
 	$sql = "SELECT sectionid, sectionname FROM accountsection ORDER BY sectionid";
 	$secresult = DB_query($sql, $db,$ErrMsg,$DbgMsg);
@@ -460,7 +462,9 @@ if (!isset($_GET['delete'])) {
     } else {
         $controlsettings['selectYes'] = true;
     }
-    $accountGroupsForm->addControl(4,4,'yesno',_('Profit and Loss') . ':',$controlsettings);
+    //$key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null,$row = null,$order = null,$dimensions = null 
+    $dimensions = 4;
+    $accountGroupsForm->addControl(4,4,'yesno',_('Profit and Loss') . ':',$controlsettings,null,3,null,$dimensions);
     unset($controlsettings);
     $controlsettings['name'] = 'SequenceInTB';
     $controlsettings['title'] = _('Enter the sequence number that this account group and its child general ledger accounts should display in the trial balance');

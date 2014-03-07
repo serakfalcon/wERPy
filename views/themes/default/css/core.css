@@ -29,3 +29,11 @@
     content: "• ";
     color: red; /* or whatever color you prefer */
 }
+
+label {
+    margin-bottom:0px;
+}
+
+.form-horizontal .control-label {
+    padding-top:0px;
+}

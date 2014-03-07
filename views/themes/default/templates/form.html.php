@@ -7,7 +7,8 @@ action: form action
 method: form method
 hiddencontrols: array of name and value for hidden controls. hidden controls have no settings.
 formtitle: title of the form
-controls: array of control objects. 
+controls: array of control objects.
+controlrow: multiarray of rows, and order within those rows. values are control references.
 for this template caption and display properties are all that is required.
 For more, see controls.html.php
 
@@ -32,26 +33,26 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
                     </div>
             <?php
             }
-            foreach ($this->controls as $control) { ?>
+            foreach ($this->controlRow as $controlRow) { ?>
                 <div class="form-group">
-                    <?php
-                    if ($control->getType() == 'submit') { ?>
-                        <div class="col-xs-12">
-                            <?php $control->display(); ?>
+                    <?php foreach ($controlRow as $controlkey) { ?>
+                        <div class="col-md-<?php echo $this->controls[$controlkey]->width;?>">
+                            <?php
+                            if ($this->controls[$controlkey]->getType() == 'submit') { ?>
+                                <div class="col-xs-12">
+                                    <?php $this->controls[$controlkey]->display(); ?>
+                                </div>
+                            <?php
+                            } else {
+                                $this->controls[$controlkey]->display();
+                            } ?>
                         </div>
                     <?php
-                    } else { ?>
-                        <div class="col-xs-4 control-label">
-                            <label><?php echo $control->caption; ?></label>
-                        </div>
-                        <div class="col-xs-8">
-                            <?php $control->display(); ?>
-                        </div>
-                    <?php
-                    } ?>
+                    } // end of controls foreach loop
+                    ?>
                 </div>
              <?php
-             } // end of controls foreach loop 
+             } // end of controlRow foreach loop 
              ?>
         <br />
     </div>

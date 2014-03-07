@@ -11,10 +11,14 @@ class controlView implements View {
     private $attributes; //compiled from settings
     private $options = array();
     private $path;
+    public $height;
+    public $width;
     
     //viewcontroller will load the appropriate path for the display file
     public function __construct($templatefolder,$classfile) {
         $this->path = $templatefolder . $classfile;
+        $this->height = 1;
+        $this->width = 1;
     }
     
     public function setType($Type) {
@@ -115,6 +119,16 @@ class controlView implements View {
         }
     }
     
+    public function setDimensions($dimensions) {
+        if (is_array($dimensions)) {
+            $this->height = (isset($dimensions['height'])) ? $dimensions['height'] : 1;
+            $this->width = (isset($dimensions['width'])) ? $dimensions['width'] : 1; 
+            return true;
+        } else {
+            //if not array, assume width
+            $this->width = $dimensions;
+        }
+    }
     
     //add a setting value (to be used as html node attributes)
     public function setSetting($setting,$value) {
@@ -254,6 +268,7 @@ class formView implements View {
     public $formTitle;
     private $action;
     private $controls = array();
+    private $controlRow = array();
     private $hiddenControls = array();
     private $path;
     
@@ -320,7 +335,7 @@ class formView implements View {
     }
     
     //adds a control to the form. $key and $tabindex are required.
-    public function addControl($key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null) {
+    public function addControl($key,$tabindex,$type,$caption = null,$settings = null,$htmlclass = null,$row = null,$order = null,$dimensions = null) {
         $newControl = $GLOBALS['MainView']->createControl();
         if(array_key_exists($key,$this->controls)) {
             //report error: could not add control : key exists already
@@ -337,13 +352,36 @@ class formView implements View {
                     $newControl->setSetting($whatSetting,$settingValue);
                 }
             }
+            $newControl->setDimensions($dimensions);
             $this->controls[$key] = $newControl;
+            //do we have positional information?
+            if(isset($row)) {
+                if(isset($order)) {
+                    //does an element already exist in this position?
+                    if (isset($this->controlRow[$row][$order])) {
+                        //yes, so append this right after that element
+                        $result = array_slice($this->controlRow[$row],0,$order,true) + array($order => $key) + array_slice($this->controlRow[$row],$order,null,true);
+                        $this->controlRow[$row] = $result;
+                    } else {
+                        //no, so we can assign the order to this element
+                        $this->controlRow[$row][$order] = $key;
+                    }
+                } else {
+                    $this->controlRow[$row][] = $key;
+                } 
+            } else {
+                if(isset($order)) {
+                    $this->controlRow[][$order] = $key;
+                } else {
+                    $this->controlRow[][0] = $key;
+                }
+            }
             return true;
         }
     }
     
     //edits an existing control. if control doesn't exist, create it with the specific key. Any arguments not passed will be ignored.
-    public function setControl($key,$tabindex = null,$type = null,$caption = null,$settings = null,$htmlclass = null) {
+    public function setControl($key,$tabindex = null,$type = null,$caption = null,$settings = null,$htmlclass = null,$row = null,$order = null, $dimensions = null) {
         if (array_key_exists($key,$this->controls)) {
             $editControl = $this->controls[$key];
             if (isset($tabindex)) {
@@ -363,10 +401,58 @@ class formView implements View {
             if (isset($htmlclass)) {
                 $editControl->htmlclass = $htmlclass;
             }
+            if (isset($dimensions)) {
+                $editControl->setDimensions($dimensions);
+            }
+            //if there is a row value set
+            if (isset($row)) {
+                    //find this key
+                $found = false;
+                foreach ($this->controlRow as $rowControl) {
+                    foreach ($rowControl as $controlOrder => $controlKey) {
+                        if ($controlKey === $key) {
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                }
+                //location in array is $rowControl $controlOrder
+                
+                //does this position already exist
+                if (isset($order) && isset($this->controlRow[$row][$order])) {
+                    
+                    if ($this->controlRow[$row][$order] !== $key) {
+                        //if the position exists, and it's not this key, add this key after the existing order (if it is this key, do nothing)
+                        $result = array_slice($this->controlRow[$row],0,$order,true) + array($order => $key) + array_slice($this->controlRow[$row],$order,null,true);
+                        $this->controlRow[$row] = $result;
+                        
+                        if ($found) {
+                            //if this key was already in the controlRow array somewhere, remove it
+                            unset($this->controlRow[$rowControl][$controlOrder]);
+                        }
+                    }
+                    
+                } else {
+                    //order does not exist yet, or is not set
+                    if (isset($order)) {
+                        $this->controlRow[$row][$order] = $key;
+                    } else {
+                        //order is not set, append to the end
+                        $this->controlRow[$row][] = $key;
+                    }
+                    
+                    if ($found) {
+                        //if this key was already in the controlRow array somewhere, remove it
+                        unset($this->controlRow[$rowControl][$controlOrder]);
+                    }
+                }
+                
+            } // end if isset($row)
+            
             return true;
         } else {
             if (isset($key) && isset($type)) {
-                return $this->addControl($key,$tabindex,$type,$caption,$settings,$htmlclass);
+                return $this->addControl($key,$tabindex,$type,$caption,$settings,$htmlclass,$row,$order,$dimensions);
             } else {
                 //error: control could not be added
                 return false;
@@ -418,8 +504,31 @@ class formView implements View {
     }
     
     public function display() {
-        global $templateFolder;
+        //if the minimal amount of information required to set this form has been prepared
         if (isset($this->FormID) && isset($this->action)) {
+            //pad out the widths of any control rows that are less than 12 long (if 12 or more, ignore)
+            //12 is a magic number from bootstrap that means 100% width
+            foreach($this->controlRow as $controlRow) {
+                $count = 0;
+                foreach($controlRow as $key) {
+                    $count += $this->controls[$key]->width;
+                }
+                if ($count < 12) {
+                    //if the sum of the widths are greater than 0, it's safe to divide by it, adjust all widths accordingly
+                    if ($count > 0) {
+                        $widthmultiplier = 12 / $count;
+                        foreach($controlRow as $key) {
+                            $this->controls[$key]->width = intval($this->controls[$key]->width * $widthmultiplier);
+                        }
+                    } else {
+                        //the sum of the widths is zero, some joker thought it'd be funny, make them all equal
+                        $widthresult = 12 / count($controlRow);
+                        foreach($controlRow as $key) {
+                            $this->controls[$key]->width = intval($widthresult);
+                        }
+                    }
+                }
+            }
             include($this->path);
         } else {
             //error, form not properly set up

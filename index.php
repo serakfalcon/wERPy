@@ -80,23 +80,20 @@ if (file_exists($cachefile) && time() - $cachetime < filemtime($cachefile) && !i
     
     //=== SubMenuDiv (wrapper) ==============================================================================
     echo '<div id="SubMenuDiv">'; //===HJ===
-    $TransMenu = $MainView->createMenu();
-    $TransMenu->menuID = $_SESSION['Module'];
+    $TransMenu = $MainView->createMenu($_SESSION['Module']);
     $TransMenu->submenuID = 'Transactions';
     $TransMenu->loadItems();
     $TransMenu->display(); //=== TransactionsDiv ===
 
     //=== InquiriesDiv ===
-    $InquiriesMenu = $MainView->createMenu();
-    $InquiriesMenu->menuID = $_SESSION['Module'];
+    $InquiriesMenu = $MainView->createMenu($_SESSION['Module']);
     $InquiriesMenu->submenuID = 'Reports';
     $InquiriesMenu->loadItems();
     GetRptLinks($_SESSION['Module'],$InquiriesMenu); //=== GetRptLinks() must be modified!!! ===
     $InquiriesMenu->display(); //=== InquiriesDiv ===
 
     // MaintenanceDiv ===
-    $MaintenanceMenu = $MainView->createMenu();
-    $MaintenanceMenu->menuID = $_SESSION['Module'];
+    $MaintenanceMenu = $MainView->createMenu($_SESSION['Module']);
     $MaintenanceMenu->submenuID = 'Maintenance';
     $MaintenanceMenu->loadItems();
     $MaintenanceMenu->display(); // MaintenanceDive ===HJ===
