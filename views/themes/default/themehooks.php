@@ -20,8 +20,11 @@ $MainView->setClassView('formView',$pathtoformView);
 
 */
 
-
-
+//Set up theme defaults for menus
+//setDefault($classtype,$setting,$value,$classID = null) ($classId for specific menus only)
+$MainView->setDefault('menu','classdefault','menu_group_item');
+$MainView->setDefault('menu','classdefault','main_menu_unselected','MainMenu');
+$MainView->setDefault('menu','classactive','main_menu_selected','MainMenu');
 /*
 
 Add files that will be directly inserted into the header and footer (must be in themefolder/includes/)
@@ -29,5 +32,6 @@ Add files that will be directly inserted into the header and footer (must be in 
 
 $MainView->addInclude('header','header.php');
 $MainView->addInclude('footer','footer.php');
+
 
 ?>

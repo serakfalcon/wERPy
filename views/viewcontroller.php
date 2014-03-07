@@ -17,5 +17,6 @@ include_once($MainView->getTemplateFolder() . 'themehooks.php');
 //add all other required class constructor files
 include_once('tableclass.php');
 include_once('formclass.php');
+include_once('menuclass.php');
 
 ?>

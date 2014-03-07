@@ -13,13 +13,29 @@ class viewController {
     private $headerincludes = array();
     private $footerincludes = array();
     private $instancearray = array();
+    private $defaults = array();
     
     public function __construct($templatefolder = null) {
         //default settings for templates. can override.
         $this->classes['table'] = 'table.html.php';
         $this->classes['form'] = 'form.html.php';
         $this->classes['control'] = 'controls.html.php';
+        $this->classes['menu'] = 'menu.html.php';
         $this->setTemplateFolder($templatefolder);
+    }
+    
+    //set up template defaults. Mostly used for menu/class assignment
+    public function setDefault($classtype,$setting,$value,$classID = null) {
+        //if we have a template for this type of class, aka it is a valid class
+        if (array_key_exists($classtype,$this->classes)) {
+            if (isset($classID)) {
+                //only apply to classes with a certain ID
+                $this->defaults[$classtype][$classID][$setting] = $value;
+            } else {
+                //apply as default
+                $this->defaults[$classtype]['~default'][$setting] = $value;
+            }
+        }
     }
     
     //set the template folder. TODO: make sure only valid folders can be set
@@ -40,6 +56,14 @@ class viewController {
         }
     }
     
+    public function getObject($objectclass,$key) {
+        if(isset($this->instancearray[$objectclass][$key])) {
+            return $this->instancearray[$objectclass][$key];
+        } else {
+            return false;
+        }
+    }
+    
     //override class views in the event the theme has a different naming scheme
     public function setClassView($class,$viewlocation) {
         if(isset($this->classes[$class])) {
@@ -51,6 +75,7 @@ class viewController {
         }
     }
     
+    //add a file to include into the header or footer
     public function addInclude($includewhere,$includefile) {
         switch($includewhere) {
             case 'header':
@@ -62,17 +87,44 @@ class viewController {
         }
     }
     
+    //output all relevant header header files
     public function getHeader() {
         foreach ($this->headerincludes as $includefile) {
             include_once($includefile);
         }
     }
     
+    //output all relevant footer files
     public function getFooter() {
         foreach ($this->footerincludes as $includefile) {
             include_once($includefile);
         }
     }
+    
+    //create a menu, and append the reference to the menu to this class.
+    //if a key is specified, append the menu with that key. if the key is taken, return false which will certainly generate an error.
+    public function createMenu($whatMenu = null,$key = null) {
+        //if the theme has any defaults saved, pass them on to the menu
+        if (isset($this->defaults['menu'][$whatMenu])) {
+            $defaults = $this->defaults['menu'][$whatMenu];
+        } else {
+            $defaults = (isset($this->defaults['menu']['~default'])) ? $this->defaults['menu']['~default'] : null;
+        }
+        $menu = new menuView($this->templateFolder . 'templates/', $this->classes['menu'],$whatMenu,$defaults);
+        if (isset($key)) {
+            if (isset($this->instancearray['menu'][$key])) {
+                //array key exists
+                return false;
+            } else {
+                $this->instancearray['menu'][$key] = $menu;
+                return $menu;
+            }
+        } else {
+            $this->instancearray['menu'][] = $menu;
+            return $menu;
+        }
+    }
+    
     
     //create a table, and append the reference to the table to this class.
     //if a key is specified, append the table with that key. if the key is taken, return false which will certainly generate an error
@@ -114,6 +166,7 @@ class viewController {
     public function createControl() {
         return new controlView($this->templateFolder . 'templates/',$this->classes['control']);
     }
+    
     
 }
 
