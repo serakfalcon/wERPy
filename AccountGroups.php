@@ -233,7 +233,7 @@ if (isset($_POST['submit'])) {
             // $RroupRow spelling error?
             
             if (isset($_POST['ParentGroupName']) AND $_POST['ParentGroupName']==$GroupRow['groupname']) {
-                                                    //$key,$text,$value,$isSelected,$id = null
+                                                    //$key,$text,$value,$isSelected,$parentID,$id = null
                 $accountGroupsForm->addControlOption(1,htmlentities($GroupRow['groupname'], ENT_QUOTES,'UTF-8'),
                                                        htmlentities($GroupRow['groupname'], ENT_QUOTES,'UTF-8'),
                                                        true);
@@ -351,7 +351,6 @@ if (!isset($_GET['delete'])) {
         $accountGroupsForm = $MainView->createForm();
         $accountGroupsForm->id = 'AccountGroups';
         $accountGroupsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
-        $accountGroupsForm->FormID = $_SESSION['FormID'];
 
 	if (isset($_GET['SelectedAccountGroup'])) {
 		//editing an existing account group

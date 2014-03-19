@@ -210,7 +210,6 @@ if (!isset($_GET['delete'])) {
     $GLaccountsForm = $MainView->createForm();
     $GLaccountsForm->id = 'GLAccounts';
     $GLaccountsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'));
-    $GLaccountsForm->FormID = $_SESSION['FormID'];
     
 	if (isset($SelectedAccount)) {
 		//editing an existing account
@@ -269,7 +268,7 @@ if (!isset($_GET['delete'])) {
     $GLaccountsForm->addControl(3,3,'select',_('Account Group') . ':',$controlsettings);
     
 	while ($myrow = DB_fetch_array($result)){
-        //addControlOption($key,$text,$value,$isSelected = null,$id = null)
+        //addControlOption($key,$text,$value,$isSelected = null,$parentID = null,$id = null)
         $GLaccountsForm->addControlOption(3,$myrow[0],$myrow[0],(isset($_POST['Group']) and $myrow[0]==$_POST['Group']));
 	}
     unset($controlsettings['required']);

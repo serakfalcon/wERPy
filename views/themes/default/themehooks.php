@@ -25,6 +25,7 @@ $MainView->setClassView('formView',$pathtoformView);
 $MainView->setDefault('menu','classdefault','menu_group_item');
 $MainView->setDefault('menu','classdefault','main_menu_unselected','MainMenu');
 $MainView->setDefault('menu','classactive','main_menu_selected','MainMenu');
+$MainView->setDefault('form','usingBootstrap',true);
 /*
 
 Add files that will be directly inserted into the header and footer (must be in themefolder/includes/)

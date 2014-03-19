@@ -8,28 +8,30 @@
 <!-- Table sorter plugin -->
 <script src="includes/DataTables/media/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
+
 $(document).ready(function() 
     { 
         <?php
-            //apply dataTable to each table instance
             $tables = $GLOBALS['MainView']->getInstances('table');
-            foreach ($tables as $table) {
-                if (isset($table->id) && $table->sortable) { ?>
-                    $("#<?php echo $table->id; ?>").dataTable({
+            if ($tables && count($tables) > 0) {
+                //apply dataTable to each table instance
+                foreach ($tables as $table) {
+                    if (isset($table->id) && $table->sortable) { ?>
+                        $("#<?php echo $table->id; ?>").dataTable({
                         <?php echo ($table->sortSettings) ? $table->sortSettings . ',' : ''; ?>
                         aoColumnDefs:[ {
                             aTargets:[ 'no-sort' ],
                             bSortable:false,
                             bSearchable:false
-                        }]
-                    }); 
+                            }]
+                        }); 
                 <?php 
+                    }
                 }
-            } 
-        ?>
+            } ?>
         
         initial();
         
     } 
-); 
+);
 </script>

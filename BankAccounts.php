@@ -241,7 +241,6 @@ if (isset($SelectedBankAccount)) {
 
 $BankAccountsForm = $MainView->createForm();
 $BankAccountsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
-$BankAccountsForm->FormID = $_SESSION['FormID'];
 
 if (isset($SelectedBankAccount) AND !isset($_GET['delete'])) {
 	//editing an existing bank account  - not deleting
@@ -291,7 +290,7 @@ if (isset($SelectedBankAccount) AND !isset($_GET['delete'])) {
 	$result = DB_query($sql,$db);
 	while ($myrow = DB_fetch_array($result)) {
 		if (isset($_POST['AccountCode']) and $myrow['accountcode']==$_POST['AccountCode']) {
-            //addControlOption($key,$text,$value,$isSelected = null,$id = null)
+            //addControlOption($key,$text,$value,$isSelected = null,$parentID = null,$id = null)
             $BankAccountsForm->addControlOption(1,htmlspecialchars($myrow['accountname'], ENT_QUOTES, 'UTF-8', false),$myrow['accountcode'],true);
 		} else {
             $BankAccountsForm->addControlOption(1,htmlspecialchars($myrow['accountname'], ENT_QUOTES, 'UTF-8', false),$myrow['accountcode']);
@@ -374,20 +373,20 @@ if (isset($SelectedBankAccount)) {
 	$result = DB_query("SELECT invoice FROM bankaccounts where accountcode =" . $SelectedBankAccount . ' LIMIT 1',$db);
 	$myrow = DB_fetch_array($result);
     if ($myrow['invoice']== 1) {
-        //addControlOption($key,$text,$value,$isSelected = null,$id = null)
+        //addControlOption($key,$text,$value,$isSelected = null,$parentID = null,$id = null)
         $BankAccountsForm->addControlOption(7,_('Fall Back Default'),1,true);
         $BankAccountsForm->addControlOption(7,_('Currency Default'),2);
         $BankAccountsForm->addControlOption(7,_('No'),0);
         
     } else {
-        //addControlOption($key,$text,$value,$isSelected = null,$id = null)
+        //addControlOption($key,$text,$value,$isSelected = null,$parentID = null,$id = null)
         $BankAccountsForm->addControlOption(7,_('No'),0,null,1);
-        $BankAccountsForm->addControlOption(7,_('Currency Default'),2,null,2);
-        $BankAccountsForm->addControlOption(7,_('Fall Back Default'),1,null,3);
+        $BankAccountsForm->addControlOption(7,_('Currency Default'),2,null,null,2);
+        $BankAccountsForm->addControlOption(7,_('Fall Back Default'),1,null,null,3);
         
         if ($myrow['invoice']== 2) {
             //cause _('Currency Default') to be selected, (null $text and $value means do not change those)
-            //setControlOption($key,$id,$text = null,$value = null,$isSelected = null)
+            //setControlOption($key,$id,$text = null,$value = null,$isSelected = null,$parentID = null)
             $BankAccountsForm->setControlOption(7,2,null,null,true);
         } else {
             //cause _('No') to be selected, (null $text and $value means do not change those)

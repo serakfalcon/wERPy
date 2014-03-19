@@ -44,6 +44,7 @@ class controlView implements View {
             case 'url':
             case 'reset':
             case 'hidden':
+            case 'content':
                 //fallthrough: all valid inputs are treated the same way
                 $this->type = $Type;
                 return true;
@@ -61,13 +62,18 @@ class controlView implements View {
     
     /*addOption will add append a new option to the end of the option array. May optionally be given an ID.
      If given an ID, will not overwrite information if the value already exists. */
-    public function addOption($text,$value,$isSelected = null,$id = null) {
+    public function addOption($text,$value,$isSelected = null,$parentID = null,$id = null) {
         $result['text'] = $text;
         $result['value'] = $value;
         if (isset($isSelected)) {
             $result['selected'] = ($isSelected) ? true : false;
         } else {
             $result['selected'] = false;
+        }
+        if (isset($parentID)) {
+            $result['parentID'] = $parentID;
+        } else {
+            $result['parentID'] = null;
         }
         if (isset($id)) {
             if (array_key_exists($id,$this->options)) {
@@ -84,7 +90,7 @@ class controlView implements View {
     }
     
     // setOption will insert or replace an option into the options array based on the key given.
-    public function setOption($id,$text = null,$value = null,$isSelected = null) {
+    public function setOption($id,$text = null,$value = null,$isSelected = null,$parentID = null) {
         if(isset($this->options[$id])) {
             if(isset($text)) {
                 $this->options[$id]['text'] = $text;
@@ -109,6 +115,19 @@ class controlView implements View {
         }
     }
     
+    public function getOptions() {
+        $result = array();
+        if ($this->getSetting('hasparent')) {
+            foreach ($this->options as $option) {   
+                $parentID = $option['parentID'];
+                $result['o' . $parentID][] = $option;
+            }
+        } else {
+            $result = $this->options;
+        }
+        return json_encode($result);
+    }
+    
     //delOption will delete an option from the options array if it exists. returns false if key was non-existent.
     public function delOption($id) {
         if(array_key_exists($id,$this->options)) {
@@ -121,18 +140,19 @@ class controlView implements View {
     
     public function setDimensions($dimensions) {
         if (is_array($dimensions)) {
-            $this->height = (isset($dimensions['height'])) ? $dimensions['height'] : 1;
-            $this->width = (isset($dimensions['width'])) ? $dimensions['width'] : 1; 
+            $this->height = ($dimensions['height']) ? $dimensions['height'] : 1;
+            $this->width = ($dimensions['width']) ? $dimensions['width'] : 1; 
             return true;
         } else {
             //if not array, assume width
-            $this->width = $dimensions;
+            $this->width = ($dimensions) ? $dimensions : 1;
         }
     }
     
     //add a setting value (to be used as html node attributes)
     public function setSetting($setting,$value) {
         switch ($setting) {
+            case 'childselect':
             case 'name':
             case 'title':
             case 'value':
@@ -142,14 +162,17 @@ class controlView implements View {
             case 'max':
             case 'min':
             case 'maxlength':
+            case 'pattern':
             case 'size':
+            
                 //fallthrough, all these settings are treated the same way
                 $this->settings[$setting] = $value;
                 return true;
                 break;
             case 'autofocus':
             case 'required' :
-                /*fallthrough: autofocus and required must be true or false.
+            case 'hasparent':
+                /*fallthrough: autofocus, required & hasparent must be true or false.
                 this current setup allows the input of setSetting('required','required') to work */
                 $this->settings[$setting] = ($value) ? true : false;
                 return true;
@@ -183,6 +206,13 @@ class controlView implements View {
         }
     }
     
+    public function getSetting($setting) {
+        if (isset($this->settings[$setting])) {
+            return $this->settings[$setting];
+        } else {
+            return null;
+        }
+    }
     //take settings (from workhorse logic) and prepare for output to controls.html.php 
     private function compileSettings() {
         $this->attributes = '';
@@ -197,6 +227,11 @@ class controlView implements View {
                     case 'min':
                     case 'max':
                     case 'maxlength':
+                    case 'size':
+                    case 'id':
+                    case 'data-type':
+                    case 'pattern':
+                    case 'size':
                         //fallthrough as these are treated the same way
                         $this->attributes .= ' ' . $key . '="' . $setting . '"';
                         break;
@@ -205,6 +240,8 @@ class controlView implements View {
                          //fallthrough as these are treated the same way
                         $this->attributes .= ($setting) ? ' ' . $key . '="' . $key . '"' : '';
                         break;
+                    case 'childselect':
+                        $this->attributes .= ' onChange="filterChild(' . "'" . $setting . "'" . ',this.selectedIndex,' . $setting . '_json);"';
                     default:
                         //any other attribute is not recognized.
                         break;
@@ -264,16 +301,33 @@ class controlView implements View {
 class formView implements View {
 
     public $id;
-    public $FormID;
     public $formTitle;
+    private $FormID;
     private $action;
     private $controls = array();
     private $controlRow = array();
     private $hiddenControls = array();
     private $path;
+    private $usingBootstrap;
     
-    public function __construct($templatefolder,$classfile) {
+    //initialize from MainView with path to this class's file, and 
+    public function __construct($templatefolder,$classfile,$defaults) {
         $this->path = $templatefolder . $classfile;
+        $this->FormID = $_SESSION['FormID']; // for session security
+        $this->parseDefaults($defaults);
+    }
+    
+    private function parseDefaults($defaults) {
+        if (is_array($defaults)) {
+            foreach($defaults as $setting => $value) {
+                switch($setting) {
+                    case 'usingBootstrap':
+                        $this->usingBootstrap = ($value) ? true : false;
+                }
+            }
+        } elseif (isset($defaults)) {
+            //if defaults is not an array, its a value, what value should it be??
+        }
     }
     
     public function setAction($whataction) {
@@ -460,6 +514,8 @@ class formView implements View {
         }
     }
     
+    
+    //remove an existing control
     public function delControl($key) {
         if (isset($this->controls[$key])) {
             unset($this->controls[$key]);
@@ -470,11 +526,11 @@ class formView implements View {
     }
     
     //add an option to a control (only used for select controls)
-    public function addControlOption($key,$text,$value,$isSelected = null,$id = null) {
+    public function addControlOption($key,$text,$value,$isSelected = null,$parentID = null,$id = null) {
         if (isset($this->controls[$key])) {
             //report success or failure based on addOption
             //addOption($text,$value,$isSelected = null,$id = null)
-            return $this->controls[$key]->addOption($text,$value,$isSelected,$id);
+            return $this->controls[$key]->addOption($text,$value,$isSelected,$parentID,$id);
         } else {
             //error, key not found
             return false;
@@ -482,10 +538,10 @@ class formView implements View {
     }
     
     //overwrite or create a new option for the control
-    public function setControlOption($key,$id,$text = null,$value = null,$isSelected = null) {
+    public function setControlOption($key,$id,$text = null,$value = null,$isSelected = null,$parentID = null) {
         if (array_key_exists($key,$this->controls)) {
             //report success or failure based on setoption
-            return $this->controls[$key]->setOption($id,$text,$value,$isSelected);
+            return $this->controls[$key]->setOption($id,$text,$value,$isSelected,$parentID);
         } else {
             //error, key not found
             return false;
@@ -506,27 +562,60 @@ class formView implements View {
     public function display() {
         //if the minimal amount of information required to set this form has been prepared
         if (isset($this->FormID) && isset($this->action)) {
-            //pad out the widths of any control rows that are less than 12 long (if 12 or more, ignore)
-            //12 is a magic number from bootstrap that means 100% width
-            foreach($this->controlRow as $controlRow) {
-                $count = 0;
-                foreach($controlRow as $key) {
-                    $count += $this->controls[$key]->width;
-                }
-                if ($count < 12) {
-                    //if the sum of the widths are greater than 0, it's safe to divide by it, adjust all widths accordingly
-                    if ($count > 0) {
-                        $widthmultiplier = 12 / $count;
-                        foreach($controlRow as $key) {
-                            $this->controls[$key]->width = intval($this->controls[$key]->width * $widthmultiplier);
-                        }
-                    } else {
-                        //the sum of the widths is zero, some joker thought it'd be funny, make them all equal
-                        $widthresult = 12 / count($controlRow);
-                        foreach($controlRow as $key) {
-                            $this->controls[$key]->width = intval($widthresult);
+            if ($this->usingBootstrap) {
+                //pad out the widths of any control rows that are less than 12 long (if 12 or more, ignore)
+                //12 is a magic number from bootstrap that means 100% width
+                foreach($this->controlRow as $controlRow) {
+                    $count = 0;
+                    foreach($controlRow as $key) {
+                        $count += $this->controls[$key]->width;
+                    }
+                    if ($count < 12) {
+                        //if the sum of the widths are greater than 0, it's safe to divide by it, adjust all widths accordingly
+                        if ($count > 0) {
+                            $widthmultiplier = 12 / $count;
+                            foreach($controlRow as $key) {
+                                $this->controls[$key]->width = intval($this->controls[$key]->width * $widthmultiplier);
+                            }
+                        } else {
+                            //the sum of the widths is zero, some joker thought it'd be funny, make them all equal
+                            $widthresult = 12 / count($controlRow);
+                            foreach($controlRow as $key) {
+                                $this->controls[$key]->width = intval($widthresult);
+                            }
                         }
                     }
+                }
+            } else {
+                $maxcount = 1;
+                //find the widest row (also keep track of the widths of each row)
+                $i = 0;
+                $rowwidth = array();
+                foreach($this->controlRow as $controlRow) {
+                    $count = 0;
+                    foreach ($controlRow as $key) {
+                        $count += $this->controls[$key]->width;
+                    }
+                    $rowwidth[$i] = ($count) ? $count : 1;
+                    if ($count > $maxcount) {
+                        $maxcount = $count;
+                    }
+                    $i++;
+                }
+                //adjust all columns to fit
+                $i = 0;
+                foreach($this->controlRow as $controlRow) {
+                    $count = 0;
+                    foreach($controlRow as $key) {
+                        //adjust each control row to be the full width
+                        $this->controls[$key]->width = intval($this->controls[$key]->width * ( $maxcount / $rowwidth[$i]));
+                        $count += $this->controls[$key]->width;
+                    }
+                    if ($count < $maxcount) {
+                        //if this row is smaller (due to rounding) expand the last control box
+                        $this->controls[$key]->width += $maxcount - $count;
+                    }
+                    $i++; //iterator to keep track of previously calculated row widths
                 }
             }
             include($this->path);

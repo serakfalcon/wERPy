@@ -213,7 +213,6 @@ if (! isset($_GET['delete'])) {
     $accountSectionsForm = $MainView->createForm();
     $accountSectionsForm->id = 'AccountSections';
     $accountSectionsForm->setAction(htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
-    $accountSectionsForm->FormID = $_SESSION['FormID'];
     
 	if (isset($_GET['SelectedSectionID'])) {
 		//editing an existing section

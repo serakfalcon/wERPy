@@ -15,9 +15,16 @@ for select, use the options array. Options are arrays containing:
 Templates are formatted to make the HTML structure obvious, with PHP to insert information as needed
 */
 
-switch($this->type) { 
+switch($this->type) {
+    case 'content':
+    //special type for inserting content into the form, could be explanatory text, a picture, what have you.
+?> 
+<div class="col-xs-12 <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?>>
+    <?php echo $this->text; ?>
+</div>
+<?php
+        break;
     case 'select':
-        //fallthrough for yesno: could have custom setting but for now we're keeping it the same as the other select boxes
     /* Display of comboboxes (selection boxes) here */
 ?>
 <div class="col-xs-4 control-label">
@@ -57,10 +64,12 @@ switch($this->type) {
     case 'submit':
     /*display of submit button here */
 ?>
-<div class="centre">
-    <button tabindex="<?php echo $this->tabindex; ?>" type="submit" class="btn btn-default <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?>>
-        <?php echo $this->caption; ?>
-    </button>
+<div class="col-xs-12">
+    <div class="centre">
+        <button tabindex="<?php echo $this->tabindex; ?>" type="submit" class="btn btn-default <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?>>
+            <?php echo $this->caption; ?>
+        </button>
+    </div>
 </div>
 <?php
         break;
@@ -97,7 +106,7 @@ switch($this->type) {
     <label><?php echo $this->caption; ?></label>
 </div>
 <div class="col-xs-8">
-    <input tabindex="<?php echo $this->tabindex; ?>" type="text" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+    <input tabindex="<?php echo $this->tabindex; ?>" type="<?php echo $this->type; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
 </div>
 <?php
     break;

@@ -36,16 +36,10 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
             foreach ($this->controlRow as $controlRow) { ?>
                 <div class="form-group">
                     <?php foreach ($controlRow as $controlkey) { ?>
-                        <div class="col-md-<?php echo $this->controls[$controlkey]->width;?>">
+                        <div class="col-md-<?php echo $this->controls[$controlkey]->width;?> row<?php echo $this->controls[$controlkey]->height; ?>">
                             <?php
-                            if ($this->controls[$controlkey]->getType() == 'submit') { ?>
-                                <div class="col-xs-12">
-                                    <?php $this->controls[$controlkey]->display(); ?>
-                                </div>
-                            <?php
-                            } else {
                                 $this->controls[$controlkey]->display();
-                            } ?>
+                            ?>
                         </div>
                     <?php
                     } // end of controls foreach loop
