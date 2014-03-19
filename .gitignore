@@ -241,7 +241,6 @@ BOM*.php
 Bank[MRE]*.php
 AddCustomer*.php
 Customer*.php
-javascripts/
 geo*.php
 favicon.ico
 logo_server.jpg
