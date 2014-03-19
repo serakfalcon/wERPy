@@ -80,7 +80,7 @@ class tableView implements View {
     function parseColumns($cell,$isHeader = false) {
         $result = array();
         if (is_array($cell)) {
-            //if an array, there are multiple values to store, if any value is found, store it
+           o //if an array, there are multiple values to store, if any value is found, store it
             //if a value is mandatory give default value if no value is found, if optional report false
             $result['content'] = isset($cell['content']) ? $cell['content'] : "";
             $result['link'] = isset($cell['link']) ? $cell['link'] : false;
@@ -138,7 +138,7 @@ class tableView implements View {
     }
     
     //replaces the contents of a row with new data. returns false if the id could not be found, or if $columns is not an array.
-    function setRow($columns,$id,$class= null,$attributes = null) {
+    function setRow($id,$columns,$class= null,$attributes = null) {
         if(array_key_exists($id,$this->rows) && is_array($columns)) {
             $editrow = $this->rows[$id];
             $editrow->columns = array();
@@ -155,7 +155,7 @@ class tableView implements View {
             }
             return true;
         } else {
-            return false;
+            return $this->addRow($columns,$id,$class,$attributes);
         }
     }
     
