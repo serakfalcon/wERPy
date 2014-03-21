@@ -80,7 +80,7 @@ class tableView implements View {
     function parseColumns($cell,$isHeader = false) {
         $result = array();
         if (is_array($cell)) {
-           o //if an array, there are multiple values to store, if any value is found, store it
+            //if an array, there are multiple values to store, if any value is found, store it
             //if a value is mandatory give default value if no value is found, if optional report false
             $result['content'] = isset($cell['content']) ? $cell['content'] : "";
             $result['link'] = isset($cell['link']) ? $cell['link'] : false;
