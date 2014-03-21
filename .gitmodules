@@ -1,10 +1,9 @@
 [submodule "includes/DoctrineDBAL"]
 	path = includes/DoctrineDBAL
 	url = https://github.com/doctrine/dbal.git
+    branch = 2.4
 [submodule "includes/DataTables"]
 	path = includes/DataTables
 	url = https://github.com/DataTables/DataTables.git
-[submodules "includes/DataTables"]
-	branch = 1_9
-[submodules "includes/DoctrineDBAL"]
-	branch = 2.4
+    branch = 1_9
+    
