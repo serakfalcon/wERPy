@@ -6,7 +6,7 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="includes/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- Table sorter plugin -->
-<script src="includes/DataTables/media/js/jquery.dataTables.min.js"></script>
+<script src="includes/DataTables/media/js/jquery.dataTables.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function() 

@@ -14,5 +14,12 @@ if (count($controls) > 0) {
             }
         }
     }
-} ?> 
+    //initialize each child select with the currently selected value of the parent
+    foreach ($controls as $control) {
+        $childselect = $control->getSetting('childselect');
+        if ( $childselect != false) {
+           echo 'filterChild(' . "'" . $childselect . "'" . ',' . $control->getSelectedOption() . ',' . $childselect . '_json);';
+        }
+    }
+} ?>
 </script>

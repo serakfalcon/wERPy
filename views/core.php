@@ -55,11 +55,11 @@ class viewController {
     
         //set the template folder. TODO: make sure only valid folders can be set
     public function setTheme($aTheme) {
-        $this->currentTheme = (isset($aTheme)) ? 'themes/' . $aTheme . '/': 'themes/default/';
+        $this->currentTheme = ($aTheme) ? 'themes/' . $aTheme : 'themes/default';
     }
         //set the theme style. TODO: make sure only valid styles can be set
     public function setStyle($Style) {
-        $this->currentStyle = (isset($Style)) ? $Style : 'default';
+        $this->currentStyle = ($Style) ? $Style : 'default';
     }
     
     public function getStyle() {
@@ -68,7 +68,7 @@ class viewController {
     
     public function getStyleLink() {
         global $RootPath;
-        return $Rootpath . 'views/' . $this->getTheme() . 'styles/' . $this->getStyle();
+        return $Rootpath . 'views/' . $this->getTheme() . '/styles/' . $this->getStyle();
     }
     
     public function getTemplates($refresh = false) {
@@ -89,6 +89,7 @@ class viewController {
                 $themestyle = array();
                 if (is_dir('views/themes/' . $theme) && $theme != '.' && $theme != '..' && $theme != '.svn' && file_exists('views/themes/' . $theme . '/themehooks.php')) {
                     if (is_dir('views/themes/' . $theme . '/styles')) {
+                        //theme has styles
                         $styles = scandir('views/themes/' . $theme . '/styles');
                         foreach ($styles as $style) {
                             //only return folders that have default.css so that we're guaranteed of at least having some styling
@@ -145,12 +146,12 @@ class viewController {
     public function addInclude($includewhere,$includefile) {
         switch($includewhere) {
             case 'header':
-                $this->headerincludes[] = $this->currentTheme . 'includes/' . $includefile;
+                $this->headerincludes[] = $this->currentTheme . '/includes/' . $includefile;
                 break;
             case 'footer':
-                $this->footerincludes[] = $this->currentTheme . 'includes/' . $includefile;
+                $this->footerincludes[] = $this->currentTheme . '/includes/' . $includefile;
                 break;
-        }
+        }   
     }
     
     //output all relevant header header files
@@ -178,7 +179,7 @@ class viewController {
         } else {
             $defaults = (isset($this->defaults['menu']['~default'])) ? $this->defaults['menu']['~default'] : null;
         }
-        $menu = new menuView($this->currentTheme . 'templates/', $this->classes['menu'],$whatMenu,$defaults);
+        $menu = new menuView($this->currentTheme . '/templates/', $this->classes['menu'],$whatMenu,$defaults);
         if (isset($key)) {
             if (isset($this->instancearray['menu'][$key])) {
                 //array key exists
@@ -197,7 +198,7 @@ class viewController {
     //create a table, and append the reference to the table to this class.
     //if a key is specified, append the table with that key. if the key is taken, return false which will certainly generate an error
     public function createTable($key = null) {
-        $table = new tableView($this->currentTheme . 'templates/',$this->classes['table']);
+        $table = new tableView($this->currentTheme . '/templates/',$this->classes['table']);
         if (isset($key)) {
             if (isset($this->instancearray['table'][$key])) {
                 //array key exists
@@ -216,7 +217,7 @@ class viewController {
     //if a key is specified, append the form with that key. if the key is taken, return false which will certainly generate an error
     public function createForm($key = null) {
         $defaults = (isset($this->defaults['form']['~default'])) ? $this->defaults['form']['~default'] : null;
-        $form = new formView($this->currentTheme . 'templates/',$this->classes['form'],$defaults);
+        $form = new formView($this->currentTheme . '/templates/',$this->classes['form'],$defaults);
 
         if (isset($key)) {
             if (isset($this->instancearray['form'][$key])) {
@@ -234,7 +235,7 @@ class viewController {
     
     //create a control. Don't bother appending it to this class, since it is a child of the form that created it.
     public function createControl() {
-        $control =  new controlView($this->currentTheme . 'templates/',$this->classes['control']);
+        $control =  new controlView($this->currentTheme . '/templates/',$this->classes['control']);
         $this->instancearray['control'][] = $control;
         return $control;
     }

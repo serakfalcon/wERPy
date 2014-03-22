@@ -138,6 +138,17 @@ class controlView implements View {
         }
     }
     
+    public function getSelectedOption() {
+        $result = null;
+        foreach ($this->options as $key => $option) {
+            if ($option['selected']) {
+                $result = $key;
+                break;
+            }
+        }
+        return $result;
+    }
+    
     public function setDimensions($dimensions) {
         if (is_array($dimensions)) {
             $this->height = ($dimensions['height']) ? $dimensions['height'] : 1;
