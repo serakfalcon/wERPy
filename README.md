@@ -28,17 +28,8 @@ Here is the rough version of menu, table, form and control classes with bootstra
 
 Use:
 ----
- 1. copy-paste into your webERP folder. Do not do this on a production site, the code isn't ready.
- 2. to 'hook in' add these lines to header.inc and footer.inc:
-
-Before default.css is linked in header.inc i.e. before line 40:
-
-``` php
-include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/viewcontroller.php');
-$MainView->getHeader();
-```
-
-After the last div but still inside the body tag in footer.inc:
+ 1. copy-paste into your webERP folder. Do not do this on a production site, the code isn't ready. Note that this will replace header.inc.
+ 2. After the last div but still inside the body tag in footer.inc, add:
 
 ``` php
 $MainView->getFooter();
