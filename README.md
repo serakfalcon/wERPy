@@ -6,6 +6,10 @@ WebERP GUI changes, view code / working code separation project
 Current Status: Work In Progress
 ===
 
+* [Getting Started](https://github.com/serakfalcon/wERPy/wiki/Getting-Started-%28Developing%29)
+* [Goals](https://github.com/serakfalcon/wERPy/wiki/Developing-wERPy)
+
+
 Goals:
 ------
 
@@ -13,7 +17,8 @@ Goals:
  * Integrate jQuery and Bootstrap for a more slick user experience
  * Create 'classic' theme that doesn't have jQuery or Bootstrap (aka it will be indistinguishable from the current version as far as the user is concerned)
  * Delegate includes to be theme-specific
-
+ * separate DB code out from Presentation layer, have Presentation layer reference the API / make the API the go-to place for all database function calls
+ 
 Here is the rough version of menu, table, form and control classes with bootstrap and DataTables.
 
  * The table class should be able to handle most tables in webERP though some more complicated structures 
@@ -41,12 +46,14 @@ $MainView->getFooter();
 
 Usage of classes
 ----------------
-Tables are instantiated by assigning $MainView->createTable() to the table variable (e.g. $tablevar = $MainView->createTable())
-Forms are instantiated by assigning $MainView->createForm() to the  form variable
-Menus are instantiated by assigning $MainView->createMenu() to the menu variable. a Menu ID can be passed,
-which will allow the system to automatically load the appropriate menu items from $MenuItems  (MainMenuLinksArray.php).
+
+*New* See the [wiki](https://github.com/serakfalcon/wERPy/wiki)!
+Tables are instantiated by assigning `$MainView->createTable()` to the table variable (e.g. `$tablevar = $MainView->createTable()`)
+Forms are instantiated by assigning `$MainView->createForm()` to the  form variable
+Menus are instantiated by assigning `$MainView->createMenu()` to the menu variable. a Menu ID can be passed,
+which will allow the system to automatically load the appropriate menu items from `$MenuItems`  (`MainMenuLinksArray.php`).
 items can be appended/deleted to the menu after it is loaded.
-Controls are not instantiated directly, this is handled through the Form's addControl/setControl/delControl functions.
+Controls are not instantiated directly, this is handled through the Form's `addControl`/`setControl`/`delControl` functions.
 Work To Do:
 ----
 

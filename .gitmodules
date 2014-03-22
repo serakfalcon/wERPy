@@ -10,3 +10,4 @@
 [submodule "includes/bootstrap"]
 	path = includes/bootstrap
 	url = https://github.com/twbs/bootstrap.git
+    branch = v3.1.1
