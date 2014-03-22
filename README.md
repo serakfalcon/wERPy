@@ -28,7 +28,8 @@ Here is the rough version of menu, table, form and control classes with bootstra
 
 Use:
 ----
- 1. copy-paste into your webERP folder. Do not do this on a production site, the code isn't ready. Note that this will replace header.inc.
+ 1. copy-paste into your webERP folder. Do not do this on a production site, the code isn't ready.
+ 2. As a note this will overwrite a number of relatively important files, like header.inc, session.inc, even index.php.
  2. After the last div but still inside the body tag in footer.inc, add:
 
 ``` php
