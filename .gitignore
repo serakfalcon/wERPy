@@ -228,7 +228,9 @@ xmlrpc/
 includes/PDF*.php
 includes/D*.php
 includes/C*.php
-includes/*.inc
+includes/P*.inc
+includes/G*.inc
+includes/EDI*.inc
 includes/barcodepack/
 includes/php-gettext/
 includes/phplot/
