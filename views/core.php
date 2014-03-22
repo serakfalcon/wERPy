@@ -1,4 +1,4 @@
-<?php
+    <?php
 interface View {
     
     function display();
@@ -24,13 +24,13 @@ class viewController {
         $this->classes['control'] = 'controls.html.php';
         $this->classes['menu'] = 'menu.html.php';
         $this->setTheme($Theme);
-        $this->currentStyle = $Style;
+        $this->setStyle($Style);
         if (file_exists('views/includes/footer.php')) {
             $this->footerincludes[] = 'views/includes/footer.php';
         }
         
         if (file_exists('views/includes/header.php')) {
-            $this->headerincludes[] = 'views/includes/footer.php';
+            $this->headerincludes[] = 'views/includes/header.php';
         }
     }
     
@@ -48,12 +48,27 @@ class viewController {
         }
     }
     
+    
     public function getTheme() {
         return $this->currentTheme;
     }
     
+        //set the template folder. TODO: make sure only valid folders can be set
+    public function setTheme($aTheme) {
+        $this->currentTheme = (isset($aTheme)) ? 'themes/' . $aTheme . '/': 'themes/default/';
+    }
+        //set the theme style. TODO: make sure only valid styles can be set
+    public function setStyle($Style) {
+        $this->currentStyle = (isset($Style)) ? $Style : 'default';
+    }
+    
     public function getStyle() {
         return $this->currentStyle;
+    }
+    
+    public function getStyleLink() {
+        global $RootPath;
+        return $Rootpath . 'views/' . $this->getTheme() . 'styles/' . $this->getStyle();
     }
     
     public function getTemplates($refresh = false) {
@@ -98,10 +113,6 @@ class viewController {
         }
     }
     
-    //set the template folder. TODO: make sure only valid folders can be set
-    public function setTheme($Theme) {
-        $this->currentTheme = (isset($Theme)) ? $Theme : 'themes/default/';
-    }
     
     public function getInstances($class) {
         if (isset($this->instancearray[$class]) && is_array($this->instancearray[$class])) {
@@ -144,6 +155,8 @@ class viewController {
     
     //output all relevant header header files
     public function getHeader() {
+        global $RootPath;
+        global $ViewTopic;
         foreach ($this->headerincludes as $includefile) {
             include_once($includefile);
         }

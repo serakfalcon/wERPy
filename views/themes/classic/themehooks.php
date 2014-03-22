@@ -31,7 +31,7 @@ $MainView->setDefault('form','usingBootstrap',false);
 Add files that will be directly inserted into the header and footer (must be in themefolder/includes/)
 */
 
-//$MainView->addInclude('header','header.php');
+$MainView->addInclude('header','header.php');
 //$MainView->addInclude('footer','footer.php');
 
 
