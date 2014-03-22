@@ -7,3 +7,6 @@
 	url = https://github.com/DataTables/DataTables.git
     branch = 1_9
     
+[submodule "includes/bootstrap"]
+	path = includes/bootstrap
+	url = https://github.com/twbs/bootstrap.git
