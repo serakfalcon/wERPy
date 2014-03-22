@@ -72,12 +72,15 @@ table .selection{ /* nested table for more complex data display/input */
 	background:#feb;
 	box-shadow:none;
 }
-th { /* table headers */
+th, caption { /* table headers */
 	font-weight: normal;
 	font-size:100%;
 	background-color: #ffd980;
 	color: black;
 	text-align: center;
+}
+caption {
+    font-weight:bold;
 }
 th.number {
 	text-align: right;
@@ -91,7 +94,7 @@ th.ascending {
 th.descending {
   cursor: n-resize;
 }
-th:after {
+th:after,caption:after {
 	content: "";
 	float: right;
 	margin-top: 7px;

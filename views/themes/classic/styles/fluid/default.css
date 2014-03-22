@@ -44,11 +44,14 @@ table{
 	margin-bottom:5px;
 }
 table.selection{}
-th{ /* table heading */
+th, caption { /* table heading */
 	font-weight:normal;
 	background-color:#cccce5;
 	color:#330000;
 	text-align:center;
+}
+caption {
+    font-weight:bold;
 }
 th.number{
 	font-weight:normal;
@@ -62,7 +65,7 @@ th.ascending {
 th.descending {
   cursor: n-resize;
 }
-th:after {
+th:after,caption:after {
 	content: "";
 	float: right;
 	margin-top: 7px;

@@ -49,10 +49,13 @@ table{
 table.selection{
 	padding-bottom:5px;
 }
-th{
+th, caption {
 	font-weight:normal;
 	background-color:#B06161;
 	color:white;
+}
+caption {
+    font-weight:bold;
 }
 th.ascending {
   cursor: s-resize;
@@ -60,7 +63,7 @@ th.ascending {
 th.descending {
   cursor: n-resize;
 }
-th:after {
+th:after,caption:after {
 	content: "";
 	float: right;
 	margin-top: 7px;

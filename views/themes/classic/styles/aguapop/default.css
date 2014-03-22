@@ -64,19 +64,24 @@ table.selection {
 	max-width:90%;
 /*padding-bottom:5px;*/
 }
-th {
+th, caption {
 	background-color:skyblue;
 	color:black;
 	font-weight:normal;
 	padding:3px;
 }
+
+caption {
+    font-weight:bold;
+}
+
 th.ascending {
   cursor: s-resize;
 }
 th.descending {
   cursor: n-resize;
 }
-th:after {
+th:after, caption:after {
 	content: "";
 	float: right;
 	margin-top: 7px;
