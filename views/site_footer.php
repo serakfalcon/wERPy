@@ -5,7 +5,7 @@
 <?php
 // get all the settings from select inputs that are children of other selects
 $controls = $GLOBALS['MainView']->getInstances('control');
-if (count($controls) > 0) {
+if (is_array($controls)) {
     foreach ($controls as $control) {
         if ($control->getType() == 'select') {
             $controlID = $control->getSetting('id');

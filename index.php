@@ -5,7 +5,6 @@ include('includes/session.inc');
 $Title=_('Main Menu');
 include('includes/header.inc');
 
-
 /*The module link codes are hard coded in a switch statement below to determine the options to show for each tab */
 include('includes/MainMenuLinksArray.php');
 

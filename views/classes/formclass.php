@@ -175,7 +175,6 @@ class controlView implements View {
             case 'maxlength':
             case 'pattern':
             case 'size':
-            
                 //fallthrough, all these settings are treated the same way
                 $this->settings[$setting] = $value;
                 return true;
@@ -183,7 +182,8 @@ class controlView implements View {
             case 'autofocus':
             case 'required' :
             case 'hasparent':
-                /*fallthrough: autofocus, required & hasparent must be true or false.
+            case 'disabled':
+                /*fallthrough: these settings must be true or false.
                 this current setup allows the input of setSetting('required','required') to work */
                 $this->settings[$setting] = ($value) ? true : false;
                 return true;
@@ -248,6 +248,7 @@ class controlView implements View {
                         break;
                     case 'autofocus':
                     case 'required' :
+                    case 'disabled' :
                          //fallthrough as these are treated the same way
                         $this->attributes .= ($setting) ? ' ' . $key . '="' . $key . '"' : '';
                         break;

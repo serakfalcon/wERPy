@@ -34,13 +34,8 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
         
             foreach ($this->controlRow as $controlRow) { ?>
                 <tr>
-                    <?php foreach ($controlRow as $controlkey) { ?>
-                        <td colspan="<?php echo $this->controls[$controlkey]->width;?>" rowspan="<?php echo $this->controls[$controlkey]->height; ?>">
-                            <?php
-                                $this->controls[$controlkey]->display();
-                            ?>
-                        </td>
-                    <?php
+                    <?php foreach ($controlRow as $controlkey) {
+                        $this->controls[$controlkey]->display();
                     } // end of controls foreach loop
                     ?>
                 </tr>

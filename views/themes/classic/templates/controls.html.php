@@ -18,16 +18,21 @@ Templates are formatted to make the HTML structure obvious, with PHP to insert i
 switch($this->type) {
     case 'content':
     //special type for inserting content into the form, could be explanatory text, a picture, what have you.
-?> 
-<div class="<?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?>>
-    <?php echo $this->text; ?>
-</div>
+?>
+<td colspan="<?php echo $this->width * 2; ?>" rowspan="<?php echo $this->height; ?>">
+    <div class="<?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?>>
+        <?php echo $this->text; ?>
+    </div>
+</td>
 <?php
         break;
     case 'select':
     /* Display of comboboxes (selection boxes) here */
 ?>
-<label><?php echo $this->caption; ?></label>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
+    <label><?php echo $this->caption; ?></label>
+</td>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
     <select tabindex="<?php echo $this->tabindex; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> >
         <?php foreach ($this->options as $option) { ?>
             <option <?php echo  $option['attributes']; ?>>
@@ -37,11 +42,15 @@ switch($this->type) {
         } //end option foreach loop
         ?>
     </select>
+</td>
 <?php
         break;
     case 'yesno':
 ?>
-<label><?php echo $this->caption; ?></label>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
+    <label><?php echo $this->caption; ?></label>
+</td>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
     <select tabindex="<?php echo $this->tabindex; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> >
         <?php foreach ($this->options as $option) { ?>
             <option <?php echo  $option['attributes']; ?>>
@@ -51,32 +60,43 @@ switch($this->type) {
         } //end option foreach loop
         ?>
     </select>
+</td>
 <?php
         break;
     case 'submit':
     /*display of submit button here */
 ?>
+<td colspan="<?php echo $this->width * 2; ?>" rowspan="<?php echo $this->height; ?>">
     <div class="centre">
         <button tabindex="<?php echo $this->tabindex; ?>" type="submit" class="btn btn-default <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?>>
             <?php echo $this->caption; ?>
         </button>
     </div>
+</td>
 <?php
         break;
     case 'number':
     /* display number box here, different from textbox? */
 ?>
-<label><?php echo $this->caption; ?></label>
-<input tabindex="<?php echo $this->tabindex; ?>" type="number" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
+    <label><?php echo $this->caption; ?></label>
+</td>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
+    <input tabindex="<?php echo $this->tabindex; ?>" type="number" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+</td>
 <?php
         break;
     case 'static':
     /* static information, cannot be edited */
 ?>
-<label><?php echo $this->caption; ?></label>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
+    <label><?php echo $this->caption; ?></label>
+</td>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
     <p class="form-control form-control-static">
         <b><?php echo $this->text; ?></b>
     </p>
+</td>
 <?php
         break;
     case 'text':
@@ -84,8 +104,12 @@ switch($this->type) {
     //fallthrough, textbox is default
     /* Display of textboxes here : */
 ?>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
     <label><?php echo $this->caption; ?></label>
+</td>
+<td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
     <input tabindex="<?php echo $this->tabindex; ?>" type="<?php echo $this->type; ?>" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+</td>
 <?php
     break;
 } // end switch of type 

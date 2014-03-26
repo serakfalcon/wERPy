@@ -29,25 +29,16 @@ if (isset($SessionSavePath)){
 if (!isset($SysAdminEmail)) {
 	$SysAdminEmail='';
 }
-
-ini_set('session.gc_maxlifetime',$SessionLifeTime);
-
-if( !ini_get('safe_mode') ){
-	set_time_limit($MaximumExecutionTime);
-	ini_set('max_execution_time',$MaximumExecutionTime);
-}
-session_write_close(); //in case a previous session is not closed
-session_start();
+include_once('presentation/session/core.php');
+$SessionControl = new sessionController;
+$SessionControl->initSession();
 
 include($PathPrefix . 'includes/ConnectDB.inc');
 include($PathPrefix . 'includes/DateFunctions.inc');
 
-if (!isset($_SESSION['AttemptsCounter']) OR $AllowDemoMode==true){
-	$_SESSION['AttemptsCounter'] = 0;
-}
-
 /* iterate through all elements of the $_POST array and DB_escape_string them
 to limit possibility for SQL injection attacks and cross scripting attacks
+DEPRECATED TO REMOVE ONCE SQL FUNCTIONS ARE DONE BY PARAMETERS
 */
 
 if (isset($_SESSION['DatabaseName'])){
@@ -75,36 +66,30 @@ if (isset($_SESSION['DatabaseName'])){
 			$_GET[$GetKey] = DB_escape_string($GetValue);
 		}
 	}
-} else { //set SESSION['FormID'] before the a user has even logged in
-	$_SESSION['FormID'] = sha1(uniqid(mt_rand(), true));
+} else {
+    //new session
+    $_SESSION['FormID'] = sha1(uniqid(mt_rand(), true));
 }
 
-include($PathPrefix . 'includes/LanguageSetup.php');
 
+/* get configuration parameters  - save in session*/
+/* set up default styling */
+$Theme = 'aguapop';
+$_SESSION['Theme'] = 'classic';
+$_SESSION['Style'] = 'aguapop';
+include_once('views/viewcontroller.php');
 
 if (!isset($AllowAnyone)){ /* only do security checks if AllowAnyone is not true */
 
-	include $PathPrefix . 'includes/UserLogin.php';	/* Login checking and setup */
-
-	if (isset($_POST['UserNameEntryField']) AND isset($_POST['Password'])) {
-		$rc = userLogin($_POST['UserNameEntryField'], $_POST['Password'], $SysAdminEmail, $db);
-	} elseif (empty($_SESSION['DatabaseName'])) {
-		$rc = UL_SHOWLOGIN;
-	} else {
-		$rc = UL_OK;
-	}
-
-	/*  Need to set the theme to make login screen nice */
-	$Theme = (isset($_SESSION['Style'])) ? $_SESSION['Style'] : 'default';
+    $rc = $SessionControl->userLogin($_POST['UserNameEntryField'], $_POST['Password'], $SysAdminEmail);
+    include($PathPrefix . 'includes/LanguageSetup.php');
 	switch ($rc) {
 	case  UL_OK; //user logged in successfully
-		include($PathPrefix . 'includes/LanguageSetup.php'); //set up the language
 		break;
 
 	case UL_SHOWLOGIN:
-		include($PathPrefix . 'includes/Login.php');
-		exit;
-
+        $MainView->displayLogin();
+        exit; //mainview will already exit
 	case UL_BLOCKED:
 		die(include($PathPrefix . 'includes/FailedLogin.php'));
 
@@ -127,139 +112,40 @@ if (!isset($AllowAnyone)){ /* only do security checks if AllowAnyone is not true
 	}
 } /* only do security checks if AllowAnyone is not true */
  elseif(basename($_SERVER['SCRIPT_NAME'])=='Logout.php'){
+    include($PathPrefix . 'includes/LanguageSetup.php');
 	header('Location: index.php');
 }
-
-
-/*User is logged in so get configuration parameters  - save in session*/
-include($PathPrefix . 'includes/GetConfig.php');
-
-
-/*If the Code $Version - held in ConnectDB.inc is > than the Database VersionNumber held in config table then do upgrades */
-if (strcmp($Version,$_SESSION['VersionNumber'])>0 AND (basename($_SERVER['SCRIPT_NAME'])!='UpgradeDatabase.php')) {
-	header('Location: UpgradeDatabase.php');
-}
-if(isset($_SESSION['DB_Maintenance'])){ 
-	if ($_SESSION['DB_Maintenance']>0)  { //run the DB maintenance script
-		if (DateDiff(Date($_SESSION['DefaultDateFormat']),
-				ConvertSQLDate($_SESSION['DB_Maintenance_LastRun'])
-				,'d')	>= 	$_SESSION['DB_Maintenance']){
-
-			/*Do the DB maintenance routing for the DB_type selected */
-			DB_Maintenance($db);
-			$_SESSION['DB_Maintenance_LastRun'] = Date('Y-m-d');
-		}
-	}
-}
-//purge the audit trail if necessary
-if (isset($_SESSION['MonthsAuditTrail'])){ 
-	 $sql = "DELETE FROM audittrail
-			WHERE  transactiondate <= '" . Date('Y-m-d', mktime(0,0,0, Date('m')-$_SESSION['MonthsAuditTrail'])) . "'";
-	$ErrMsg = _('There was a problem deleting expired audit-trail history');
-	$result = DB_query($sql,$db);
-}
-/*Check to see if currency rates need to be updated */
-if (isset($_SESSION['UpdateCurrencyRatesDaily'])){
-	if ($_SESSION['UpdateCurrencyRatesDaily']!=0)  {
-		if (DateDiff(Date($_SESSION['DefaultDateFormat']),
-			ConvertSQLDate($_SESSION['UpdateCurrencyRatesDaily']),'d')> 0){
-
-			if ($_SESSION['ExchangeRateFeed']=='ECB') {
-				$CurrencyRates = GetECBCurrencyRates(); // gets rates from ECB see includes/MiscFunctions.php
-				/*Loop around the defined currencies and get the rate from ECB */
-				if ($CurrencyRates!=false) {
-					$CurrenciesResult = DB_query("SELECT currabrev FROM currencies",$db);
-					while ($CurrencyRow = DB_fetch_row($CurrenciesResult)){
-						if ($CurrencyRow[0]!=$_SESSION['CompanyRecord']['currencydefault']){
-
-							$UpdateCurrRateResult = DB_query("UPDATE currencies SET rate='" . GetCurrencyRate($CurrencyRow[0],$CurrencyRates) . "'
-																WHERE currabrev='" . $CurrencyRow[0] . "'",$db);
-						}
-					}
-				}
-			} else {
-				$CurrenciesResult = DB_query("SELECT currabrev FROM currencies",$db);
-				while ($CurrencyRow = DB_fetch_row($CurrenciesResult)){
-					if ($CurrencyRow[0]!=$_SESSION['CompanyRecord']['currencydefault']){
-						$UpdateCurrRateResult = DB_query("UPDATE currencies SET rate='" . google_currency_rate($CurrencyRow[0]) . "'
-															WHERE currabrev='" . $CurrencyRow[0] . "'",$db);
-					}
-				}
-			}
-			$_SESSION['UpdateCurrencyRatesDaily'] = Date('Y-m-d');
-			$UpdateConfigResult = DB_query("UPDATE config SET confvalue = '" . Date('Y-m-d') . "' WHERE confname='UpdateCurrencyRatesDaily'",$db);
-		}
-	}
-}
-
+$SessionControl->getConfig($ForceConfigReload);
+$SessionControl->doMaintenance();
+/* override default styling with user specific styling, change styling if it has recently been changed */
 if (isset($_POST['Style']) AND ($_SESSION['UsersRealName'] == $_POST['RealName'])) {
 	$_SESSION['Style'] = $_POST['Style'];
 	$Theme = ($_POST['Style']) ? $_POST['Style'] : 'aguapop';
-} elseif (!isset($_SESSION['Style'])) {
-	$Theme = $_SESSION['DefaultTheme'];
-	$_SESSION['Style'] = $_SESSION['DefaultTheme'];
-
+    $MainView->setStyle($_SESSION['Style']);
 } else {
 	$Theme = ($_SESSION['Style']) ? $_SESSION['Style'] : 'aguapop';
+    $MainView->setStyle($Theme);
 }
 
 if (isset($_POST['Theme']) && ($_SESSION['UsersRealName'] == $_POST['RealName'])) {
     $_SESSION['Theme'] = $_POST['Theme'];
-} elseif (!isset($_SESSION['Theme'])) {
-    $_SESSION['Theme'] = 'default';
+    $MainView->setTheme($_SESSION['Theme']);
 }
 
-/* Set the logo if not yet set.
- * will be done only once per session and each time
- * we are not in session (i.e. before login)
- */
-if (empty($_SESSION['LogoFile'])) {
-	/* find a logo in companies/$CompanyDir
-	 * (nice side effect of function:
-	 * variables are local, so we will never
-	 * cause name clashes)
-	 */
+        /* Set the logo if not yet set.
+         * will be done only once per session and each time
+         * we are not in session (i.e. before login)
+         */
+if (!isset($_SESSION['LogoFile'])) {
+    /*for backwards compatibility, sets $_SESSION['LogoFile'], however this function also returns the logo file
+     so you can call this function instead of referencing the logofile, replace $_SESSION['LogoFile'] with $MainView->getLogo();
+     everywhere and this code can be erased */
+   $MainView->getLogo();
 
-	function findLogoFile($CompanyDir, $PathPrefix) {
-		$dir = $PathPrefix.'companies/' . $CompanyDir . '/';
-		$DirHandle = dir($dir);
-		while ($DirEntry = $DirHandle->read() ){
-			if ($DirEntry != '.' AND $DirEntry !='..'){
-				$InCompanyDir[] = $DirEntry; //make an array of all files under company directory
-			}
-		} //loop through list of files in the company directory
-		if ($InCompanyDir !== FALSE) {
-			foreach($InCompanyDir as $logofilename) {
-				if (strncasecmp($logofilename,'logo.png',8) === 0 AND
-					is_readable($dir . $logofilename) AND
-					is_file($dir . $logofilename)) {
-					$logo = $logofilename;
-					break;
-				}
-			}
-			if (!isset($logo)) {
-				foreach($InCompanyDir as $logofilename) {
-					if (strncasecmp($logofilename,'logo.jpg',8) === 0 AND
-						is_readable($dir . $logofilename) AND
-						is_file($dir . $logofilename)) {
-						$logo = $logofilename;
-						break;
-					}
-				}
-			}
-			if (empty($logo)) {
-				return null;
-			} else {
-				return 'companies/' .$CompanyDir .'/'. $logo;
-			}
-		} //end listing of files under company directory is not empty
-	}
-
-	/* Find a logo in companies/<company of this session> */
-	if (!empty($_SESSION['DatabaseName'])) {
-		$_SESSION['LogoFile'] = findLogoFile($_SESSION['DatabaseName'], $PathPrefix);
-	}
 }
+
+        
+
 
 if ($_SESSION['HTTPS_Only']==1){
 	if ($_SERVER['HTTPS']!='on'){

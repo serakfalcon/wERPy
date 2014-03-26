@@ -5,14 +5,14 @@
 	// Needs the file config.php loaded where the variables are defined for
 	//  $RootPath
 	//  $Title - should be defined in the page this file is included with
-	if (!isset($RootPath)){
+    	if (!isset($RootPath)){
 		$RootPath = dirname(htmlspecialchars($_SERVER['PHP_SELF']));
 		if ($RootPath == '/' OR $RootPath == "\\") {
 			$RootPath = '';
 		}
 	}
-
-    include($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/viewcontroller.php');
+    //viewcontroller is included in session.inc, but if session.inc is not included the viewcontroller must be added
+    include_once($_SERVER['DOCUMENT_ROOT'] . $RootPath . '/views/viewcontroller.php');
     $MainView->getHeader();
     echo '</head>';
 	echo '<body>';
