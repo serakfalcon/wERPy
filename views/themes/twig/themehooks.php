@@ -8,7 +8,7 @@ note that pages created with custom view classes will not be viewable by other t
 */
 
 /* prepare TWIG templater */
-require_once('includes/Twig/Autoloader.php');
+require_once('includes/Twig/lib/Twig/Autoloader.php');
 Twig_Autoloader::register();
 $loader = new Twig_Loader_Filesystem('views/themes/twig/templates');
 global $twiggy;

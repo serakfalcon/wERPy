@@ -11,3 +11,6 @@
 	path = includes/bootstrap
 	url = https://github.com/twbs/bootstrap.git
     branch = v3.1.1
+[submodule "includes/Twig"]
+	path = includes/Twig
+	url = https://github.com/fabpot/Twig.git
