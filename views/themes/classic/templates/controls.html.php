@@ -99,6 +99,35 @@ switch($this->type) {
 </td>
 <?php
         break;
+    case 'radio':
+    /* radio controls: allow controlOptions */
+    if (!empty($this->options)) {
+?>
+    <td colspan="<?php echo $this->width * 2; ?>" rowspan="<?php echo $this->height; ?>">
+        <label tabindex="<?php echo $this->tabindex; ?>"><?php echo $this->caption;?></label>
+    </tr>
+    <tr>
+    <td colspan="<?php echo $this->width * 2; ?>" rowspan="<?php echo $this->height; ?>">
+        <?php
+            $i = 0;
+            foreach ($this->options as $option) {
+                ?>
+                <input tabindex="-1" type="radio" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $option['attributes']; echo $this->attributes; ?> />
+                    <?php echo $option['text']; ?>
+                <?php echo ($i) ? '<br />' : ''; 
+                    $i++;
+            }
+    } else { 
+    ?>
+        <td colspan="<?php echo $this->width; ?>" rowspan ="<?php echo $this->height; ?>">
+            <label><?php echo $this->caption; ?></label>
+        </td>
+        <td colspan="<?php echo $this->width; ?>" rowspan="<?php echo $this->height; ?>">
+            <input tabindex="<?php echo $this->tabindex; ?>" type="radio" class="form-control <?php echo $this->htmlclass; ?>" <?php echo $this->attributes; ?> />
+        </td>
+    <?php
+    }
+        break;
     case 'text':
     default:
     //fallthrough, textbox is default

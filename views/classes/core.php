@@ -90,7 +90,7 @@ trait ThemeController {
     
 }
 
-//the SiteViewController trait manages general site loading, headers, footers, error pages, the company logo and login redirect rendering
+//the SiteViewController trait manages general site loading, headers, footers, critical error pages, the company logo and login redirect rendering
 trait SiteViewController {
     
     private $headerincludes = array();
@@ -182,7 +182,7 @@ trait SiteViewController {
     
         //there is a critical error that needs to block the rest of the site from rendering.
         //if the current theme has an error handler, use that, if not, fall back to default.
-    public function displayCriticalError($title,$message) {
+    public function throwCriticalError($title,$message) {
         $errorpage = new criticalErrorsView;
         $errorpage->title = $title;
         $errorpage->display();

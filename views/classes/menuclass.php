@@ -33,6 +33,8 @@ class menuView implements View {
             } elseif (isset($headercontent)) {
                 //header content is not an array, treat as a string
                 $this->header['content'] = $headercontent;
+                $this->header['class'] = false;
+                $this->header['attributes'] = false;
             } elseif ((is_array($headerimage) && !isset($headerimage['src'])) || !isset($headerimage)) {
                 //error: header content or image exists but the variables are not formatted properly
                 return false;

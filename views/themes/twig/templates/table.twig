@@ -1,0 +1,49 @@
+{#
+Variables used for the table
+tableclass variables
+$classes->table (for table)
+$classes->headers (default for headers)
+
+$attributes (customizable table attributes)
+
+
+Templates are formatted to make the HTML structure obvious, with PHP to insert information as needed
+#}
+<table class="selection {{ classes.table }}" {{ attributes }}>
+{% if title %}
+    <caption>
+        {{ title }}
+    </caption>
+{% endif %}
+{% if headers %}
+    <tr> 
+        {% for item in headers %}
+        <th {% if sortable %} class="ascending" {% elseif item.class %} class="{{ item.class }}" {% endif %}
+            {% if item.span > 1 %} colspan="{{ item.span }}"{% endif %}>
+            {{ item.content }}
+            </th>
+        {% endfor %}
+    </tr>
+{% endif %}
+    {% set i = true %}
+    {% for arow in rows %}
+        <tr class="{% if i %} OddTableRows {% else %} EvenTableRows {% endif %} {{ arow.htmlclass }}" {{ attributes }}>
+            {% set i = not i %}
+            {% for column in arow.columns %}
+                {% if column.isheader %}<th {% else %}<td {% endif %}
+                {% if column.span != 1 %} colspan="{{ column.span }}"{% endif %}
+                {% if column.class %}class="{{ column.class }}"{% endif %}>
+                {% spaceless %}
+                    {% if column.link %}
+                            <a href="{{ column.link }}" {{ column.attributes }} >
+                                {{ column.content|raw }}
+                            </a>
+                    {% else %}
+                        {{ column.content|raw }}
+                    {% endif %}
+                {% endspaceless %}
+                {% if column.isheader %}</th>{% else %}</td>{% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>

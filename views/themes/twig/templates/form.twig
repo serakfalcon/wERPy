@@ -1,0 +1,38 @@
+{#
+Variables used for the form
+formView variables
+id: what form it is
+action: form action
+method: form method
+hiddencontrols: array of name and value for hidden controls. hidden controls have no settings.
+formtitle: title of the form
+controls: array of control objects.
+controlrow: multiarray of rows, and order within those rows. values are control references.
+for this template caption and display properties are all that is required.
+For more, see controls.html.php
+
+Templates are formatted to make the HTML structure obvious, with PHP to insert information as needed
+#}
+{% import "controls.twig" as controlTemplate %}
+<form method="post" id="{{ id }}" action="{{ action }}" class="form-horizontal" role="form">
+    <table>
+    {% if formTitle %}
+        <caption>
+            {{ formTitle }}
+        </caption>
+    {% endif %}
+    <input type="hidden" name="FormID" value="{{ FormID }}" />
+    {% for hiddencontrol in hiddencontrols %}
+        <input type="hidden" name="{{ hiddencontrol.name }}" value="{{ hiddencontrol.value }}" />
+    {% endfor %}
+    {% for row in controlRow %}
+        <tr>
+            {% for key in row %}
+                {# display returns true if successful so prevent twig from outputting that #}
+                {% set test = controls[key].display %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+        <br />
+    </table>
+</form>

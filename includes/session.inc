@@ -41,32 +41,7 @@ to limit possibility for SQL injection attacks and cross scripting attacks
 DEPRECATED TO REMOVE ONCE SQL FUNCTIONS ARE DONE BY PARAMETERS
 */
 
-if (isset($_SESSION['DatabaseName'])){
-	foreach ($_POST as $PostVariableName => $PostVariableValue) {
-		if (gettype($PostVariableValue) != 'array') {
-			if(get_magic_quotes_gpc()) {
-				$_POST['name'] = stripslashes($_POST['name']);
-			}
-			$_POST[$PostVariableName] = DB_escape_string($PostVariableValue);
-		} else {
-			foreach ($PostVariableValue as $PostArrayKey => $PostArrayValue) {
-				if(get_magic_quotes_gpc()) {
-					$PostVariableValue[$PostArrayKey] = stripslashes($value[$PostArrayKey]);
-				}
-				$PostVariableValue[$PostArrayKey] = DB_escape_string($PostArrayValue);
-			}
-		}
-	}
-
-	/* iterate through all elements of the $_GET array and DB_escape_string them
-	to limit possibility for SQL injection attacks and cross scripting attacks
-	*/
-	foreach ($_GET as $GetKey => $GetValue) {
-		if (gettype($GetValue) != 'array') {
-			$_GET[$GetKey] = DB_escape_string($GetValue);
-		}
-	}
-} else {
+if (!isset($_SESSION['DatabaseName'])) {
     //new session
     $_SESSION['FormID'] = sha1(uniqid(mt_rand(), true));
 }
@@ -75,7 +50,7 @@ if (isset($_SESSION['DatabaseName'])){
 /* get configuration parameters  - save in session*/
 /* set up default styling */
 $Theme = 'aguapop';
-$_SESSION['Theme'] = 'classic';
+$_SESSION['Theme'] = 'twig';
 $_SESSION['Style'] = 'aguapop';
 include_once('views/viewcontroller.php');
 

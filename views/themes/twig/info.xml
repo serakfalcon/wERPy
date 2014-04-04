@@ -1,0 +1,8 @@
+<templateinfo>
+    <name>Twig Demo</name>
+    <author>webERP project</author>
+    <version>1.0</version>
+    <errorpages>
+        <failedlogin>errorpages/FailedLogin.php</failedlogin>
+    </errorpages>
+</templateinfo>

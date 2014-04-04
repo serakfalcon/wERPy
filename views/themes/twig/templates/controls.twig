@@ -1,0 +1,98 @@
+{#
+Variables used for the control
+type -> what kind of control
+tabindex -> tabindex value
+attributes -> custom html attributes given to the control (class excluded)
+htmlclass -> any class extensions (since class is defined here)
+
+for select, use the options array. Options are arrays containing:
+['selected'] (true/false)
+['value'] (option value)
+['attributes'] pre-compiled value and selected. Use this unless there's good reason to access selected / value
+['text'] (what the user sees inside the option)
+
+Templates are formatted to make the HTML structure obvious, with PHP to insert information as needed
+#}
+{% macro label(width,height,caption) %} 
+    <td colspan="{{ width }}" rowspan="{{ height }}">
+        <label>{{ caption }}</label>
+    </td>
+{% endmacro %}
+{% macro showControl(type,tabindex,width,height,htmlclass,attributes,caption,text,options) %}
+    {% autoescape false %}
+    {% import _self as make %}
+    {% if type == "content" %}
+        {# special type for inserting content into the form, not actually a control #}
+        <td colspan="{{ width * 2 }}" rowspan="{{ height }}">
+            <div class="{{ htmlclass }}" {{ attributes }}>
+                {{ text }}
+            </div>
+        </td>
+    {% elseif type == "select" %}
+        {{ make.label(width,height,caption) }}
+        <td colspan="{{ width }}" rowspan="{{ height }}">
+            <select tabindex="{{ tabindex }}" class="form-control {{ htmlclass }}" {{ attributes }}>
+                {% for option in options %}
+                    <option {{ option.attributes }}>
+                        {{ option.text }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    {% elseif type == "yesno" %}
+        {{ make.label(width,height,caption) }}
+        <td colspan="{{ width }}" rowspan="{{ height }}">
+            <select tabindex="{{ tabindex }}" class="form-control {{ htmlclass }}" {{ attributes }}>
+                {% for option in options %}
+                    <option {{ option.attributes }}>
+                        {{ option.text }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    {% elseif type == "submit" %}
+        <td colspan="{{ width * 2 }}" rowspan="{{ height }}">
+            <div class="centre">
+                <button tabindex="{{ tabindex }}" type="submit" class="btn btn-default {{ htmlclass }}" {{ attributes }} >
+                    {{ caption }}
+                </button>
+            </div>
+        </td>
+    {% elseif type == "number" %}
+        {{ make.label(width,height,caption) }}
+        <td colspan="{{ width }}" rowspan="{{ height }}">
+            <input tabindex="{{ tabindex }}" type="number" class="form-control {{ htmlclass }}" {{ attributes }} />
+            
+        </td>
+    {% elseif type == "static" %}
+        {{ make.label(width,height,caption) }}
+        <td colspan="{{ width }}" rowspan="{{ height }}">
+            <p class="form-control form-control-static">
+                <b>{{ text }}</b>
+            </p>
+        </td>
+    {% elseif type == "radio" %}
+        {{ make.label(width,height,caption) }}
+            <td colspan="{{ width }}" rowspan="{{ height }}" tabindex="{{ tabindex }}">
+                {% if options %}
+                    {% set i = false %}
+                    {% for option in options %}
+                        <input tabindex="-1" type="radio" class="form-control {{ htmlclass }}" {{ attributes }} />
+                        {{ option.text }}
+                        {% if i %}
+                            <br />
+                        {% endif %}
+                        {% set i = not i %}
+                    {% endfor %}
+                {% else %}
+                    <input tabindex="{{ tabindex }}" type="radio" class="form-control {{ htmlclass }}" {{ attributes }} />
+                {% endif %}
+            </td>
+    {% else %}
+        {{ make.label(width,height,caption) }}
+        <td colspan="{{ width }}" rowspan="{{ height }}" tabindex="{{ tabindex }}">
+            <input tabindex="{{ tabindex }}" type="{{ type }}" class="form-control {{ htmlclass }}" {{ attributes }} />
+        </td>
+    {% endif %}
+    {% endautoescape %}
+{% endmacro %}

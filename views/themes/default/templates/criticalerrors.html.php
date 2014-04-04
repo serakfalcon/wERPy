@@ -9,6 +9,7 @@
     </head>
     <body>
         <div id="container">
+            <?php echo $this->ErrorMessage; ?>
         </div>
     </body>
 </html>

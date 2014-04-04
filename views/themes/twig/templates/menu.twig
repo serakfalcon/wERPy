@@ -1,0 +1,32 @@
+{#
+Variables used for the menu
+htmlID, the ID for the <div> containing the menu
+$items consisting of menu items containing:
+['link'] for the URL
+['content'] for the content
+['active'] if the link is active
+Templates are formatted to make the HTML structure obvious, with PHP to insert information as needed
+#}
+<div id="{{ htmlID }}">
+    <ul>
+    {% if header.content or header.image %}
+        <li class="{{ header.class }}">
+            {% if header.src %}
+                <img src="{{ header.src }}" {{ header.imageattributes }} />
+            {% endif %}
+            {{ header.content|e }}
+        </li>
+    {% endif %}
+    {% for menuitem in items %}
+        <li class="{% if menuitem.isActive %}{{ classes.active }}{% elseif menuitem.class %}{{ menuitem.class }}{% else %}{{ classes.default }}{% endif %}" {{ menuitem.attributes }}>
+            {% if menuitem.link %}
+                <a href="{{ menuitem.link }}">
+                    {{ menuitem.content }}
+                </a>
+            {% else %}
+                {{ menuitem.content }}
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+</div>
